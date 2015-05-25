@@ -1,3 +1,5 @@
+#include "schedproc.h"
+
 class Schedproc {
 
     endpoint_t endpoint;	/* process endpoint id */
