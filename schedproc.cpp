@@ -1,4 +1,4 @@
-#include "c_schedproc.h"
+#include "schedproc.h"
 
 
 // TODO: Check struct call to C typedef
