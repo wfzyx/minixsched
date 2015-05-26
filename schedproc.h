@@ -76,8 +76,9 @@ class Schedproc
 		unsigned burst_history[BURST_HISTORY_LENGTH];
 		unsigned burst_hist_cnt;
   	public:
-	    void setValues(struct schedproc argStruct);
-	    struct schedproc toStruct ();
+	    // void setValues(struct schedproc argStruct);
+	    // struct schedproc toStruct ();
+	    do_stop_scheduling(message *m_ptr);
  };
 
  extern std::list<Schedproc> listSched(NR_PROCS)
