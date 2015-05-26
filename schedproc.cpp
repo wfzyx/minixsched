@@ -1,3 +1,4 @@
+#include "sched.h"
 #include "schedproc.h"
 
 class Schedproc {
@@ -12,7 +13,7 @@ class Schedproc {
 	unsigned base_time_slice;
 	unsigned time_slice;		/* this process's time slice */
 	unsigned cpu;
-	bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+//	bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 
 	unsigned burst_history[BURST_HISTORY_LENGTH];
 	unsigned burst_hist_cnt;
@@ -34,7 +35,7 @@ struct schedproc Schedproc::toStruct(){
 	retStruct.base_time_slice = base_time_slice;
 	retStruct.time_slice = time_slice;
 	retStruct.cpu = cpu;
-	retStruct.cpu_mask[BITMAP_CHUNKS = cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+//	retStruct.cpu_mask[BITMAP_CHUNKS = cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 	retStruct.burst_history[BURST_HISTORY_LENGTH] = burst_history[BURST_HISTORY_LENGTH];
 	retStruct.burst_hist_cnt = burst_hist_cnt;
 
@@ -50,7 +51,8 @@ Schedproc::Schedproc (struct schedproc argStruct) {
 	base_time_slice = argStruct.base_time_slice;
 	time_slice = argStruct.time_slice;
 	cpu = argStruct.cpu;
-	cpu_mask[BITMAP_CHUNKS = argStruct.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+//	cpu_mask[BITMAP_CHUNKS = 
+argStruct.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 	burst_history[BURST_HISTORY_LENGTH] = argStruct.burst_history[BURST_HISTORY_LENGTH];
 	burst_hist_cnt = argStruct.burst_hist_cnt;
 

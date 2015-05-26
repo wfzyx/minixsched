@@ -1,8 +1,12 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* This table has one slot per process.  It contains scheduling information
  * for each process.
  */
-#include <limits.h>
 
+#include <limits.h>
 #include <minix/bitmap.h>
 
 /* EXTERN should be extern except in main.c, where we want to keep the struct */
@@ -39,3 +43,7 @@ EXTERN struct schedproc {
 
 /* Flag values */
 #define IN_USE		0x00001	/* set when 'schedproc' slot in use */
+
+#ifdef __cplusplus
+}
+#endif
