@@ -18,15 +18,15 @@ class Schedproc {
 	unsigned burst_history[BURST_HISTORY_LENGTH];
 	unsigned burst_hist_cnt;
   public:
-    Schedproc (struct schedproc argStruct);
-    struct schedproc toStruct ();
+    Schedproc (schedproc argStruct);
+    schedproc toStruct ();
 
 };
 
 
-struct schedproc Schedproc::toStruct(){
+schedproc Schedproc::toStruct(){
 
-	struct schedproc retStruct;
+	schedproc retStruct;
 	retStruct.endpoint = endpoint;
 	retStruct.parent = parent;
 	retStruct.flags = flags;
@@ -41,7 +41,7 @@ struct schedproc Schedproc::toStruct(){
 
 }
 
-Schedproc::Schedproc (struct schedproc argStruct) {
+Schedproc::Schedproc (schedproc argStruct) {
 
 	endpoint = argStruct.endpoint;
 	parent = argStruct.parent;
