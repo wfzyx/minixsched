@@ -9,6 +9,7 @@
  */
 #include "sched.h"
 #include "schedproc.h"
+#include "c_schedproc.h"
 #include <assert.h>
 #include <minix/com.h>
 #include <machine/archtypes.h>

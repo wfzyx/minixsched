@@ -1,6 +1,6 @@
 # Makefile for Scheduler (SCHED)
 PROG=	sched
-SRCS=	main.c schedule.c utility.c schedproc.cpp
+SRCS=	main.c schedule.c utility.c c_schedproc.cpp
 
 DPADD+=	${LIBSYS} ${LIBTIMERS}
 LDADD+=	-lsys -ltimers
@@ -12,5 +12,6 @@ BINDIR?= /usr/sbin
 CPPFLAGS.main.c+=	-I${NETBSDSRCDIR}
 CPPFLAGS.schedule.c+=	-I${NETBSDSRCDIR}
 CPPFLAGS.utility.c+=	-I${NETBSDSRCDIR}
+CPPFLAGS.c_schedproc.cpp+=	-I${NETBSDSRCDIR}
 
 .include <minix.bootprog.mk>

@@ -1,6 +1,9 @@
 /* Function prototypes. */
 
-struct schedproc;
+struct schedproc;			// struct original
+struct Schedproc2;			// acessando classe como struct
+//Schedproc2* sc2 = Schedproc2_new();	// nova classe
+
 #include <timers.h>
 
 /* main.c */
