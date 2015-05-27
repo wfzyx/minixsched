@@ -126,7 +126,7 @@ int Schedproc::do_stop_scheduling(message *m_ptr)
 	return OK;
 }
 
-int sched_isokendpt(int endpoint, int *proc)
+int Schedproc::sched_isokendpt(int endpoint, int *proc)
 {
 	*proc = _ENDPOINT_P(endpoint);
 	if (*proc < 0)
@@ -140,7 +140,7 @@ int sched_isokendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-int sched_isemtyendpt(int endpoint, int *proc)
+int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 {
 	*proc = _ENDPOINT_P(endpoint);
 	if (*proc < 0)
@@ -153,7 +153,7 @@ int sched_isemtyendpt(int endpoint, int *proc)
 }
 
 
-int do_nice()
+int Schedproc::do_nice()
 {
 	int rv;
 	int proc_nr_n;
@@ -192,7 +192,7 @@ int do_nice()
 	return rv;
 }
 
-int schedule_process(unsigned flags)
+int Schedproc::schedule_process(unsigned flags)
 {
 	int err;
 	int new_prio, new_quantum, new_cpu;
