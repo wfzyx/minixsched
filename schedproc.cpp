@@ -123,7 +123,8 @@ int Schedproc::do_noquantum(message *m_ptr) {
 	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 	
 	burst = (this->time_slice * 1000 / ipc) / 100;
-	burst = burst_smooth(rmp, burst);
+// TODO CHECK THIS ?!?!?!?!
+//	burst = burst_smooth(rmp, burst);
 
 	queue_bump = burst/INC_PER_QUEUE;
 
@@ -134,9 +135,11 @@ int Schedproc::do_noquantum(message *m_ptr) {
 	this->priority = this->max_priority + queue_bump;
 	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
 
-	/*if ((rv = schedule_process_local(rmp)) != OK) {
+// TODO CHECK WHERE IN HELL THE FLAG SHOULD COME FROM
+        unsigned placeholder = 0;
+	if ((rv = this->schedule_process(placeholder)) != OK) {
 		return rv;
-	}*/
+	}
 	return OK;
 }
 
