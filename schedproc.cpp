@@ -153,6 +153,7 @@ int sched_isemtyendpt(int endpoint, int *proc)
 }
 
 
+int do_nice()
 {
 	int rv;
 	int proc_nr_n;
