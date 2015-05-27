@@ -84,6 +84,40 @@ void Schedproc::pick_cpu()
 #endif
 }
 
+int Schedproc::do_noquantum(message *m_ptr) {
+	int rv, proc_nr_n;
+	unsigned ipc, burst, queue_bump;
+	short load;
+
+	/*if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
+		cout << "SCHED: WARNING: got an invalid endpoint in OOQ msg " <<  m_ptr->m_source << ".\n";
+		return EBADEPT;
+	}*/
+
+	//rmp = &schedproc[proc_nr_n];
+
+	ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
+
+	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
+	
+	burst = (this->time_slice * 1000 / ipc) / 100;
+	burst = burst_smooth(rmp, burst);
+
+	queue_bump = burst/INC_PER_QUEUE;
+
+	if (this->max_priority + queue_bump > MIN_USER_Q) {
+		queue_bump = MIN_USER_Q - this->max_priority;
+	}
+
+	this->priority = this->max_priority + queue_bump;
+	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
+
+	/*if ((rv = schedule_process_local(rmp)) != OK) {
+		return rv;
+	}*/
+	return OK;
+}
+
 int Schedproc::burst_smooth(unsigned burst)
 {
 	int i;
