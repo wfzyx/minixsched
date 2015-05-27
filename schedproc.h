@@ -75,7 +75,7 @@ class Schedproc
 		bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 		unsigned burst_history[BURST_HISTORY_LENGTH];
 		unsigned burst_hist_cnt;
-	    // void setValues(struct schedproc argStruct);
+	    void setValues(Schedproc &src);
 	    // struct schedproc toStruct ();
 	    // Schedproc(Schedproc &cSrc);
 	    void pick_cpu();

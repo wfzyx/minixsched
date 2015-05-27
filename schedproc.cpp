@@ -42,20 +42,20 @@
 // }
 
 
-// void Schedproc::setValues (struct schedproc argStruct)
-// {
-// 	endpoint = argStruct.endpoint;
-// 	parent = argStruct.parent;
-// 	flags = argStruct.flags;
-// 	max_priority = argStruct.max_priority;
-// 	priority = argStruct.priority;
-// 	base_time_slice = argStruct.base_time_slice;
-// 	time_slice = argStruct.time_slice;
-// 	cpu = argStruct.cpu;
-// 	cpu_mask[BITMAP_CHUNKS = argStruct.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-// 	burst_history[BURST_HISTORY_LENGTH] = argStruct.burst_history[BURST_HISTORY_LENGTH];
-// 	burst_hist_cnt = argStruct.burst_hist_cnt;
-// }
+void Schedproc::setValues (Schedroc &src)
+{
+	endpoint = src.endpoint;
+	parent = src.parent;
+	flags = src.flags;
+	max_priority = src.max_priority;
+	priority = src.priority;
+	base_time_slice = src.base_time_slice;
+	time_slice = src.time_slice;
+	cpu = src.cpu;
+	cpu_mask[BITMAP_CHUNKS = src.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+	burst_history[BURST_HISTORY_LENGTH] = src.burst_history[BURST_HISTORY_LENGTH];
+	burst_hist_cnt = src.burst_hist_cnt;
+}
 
 //Schedproc::Schedproc(Schedproc src)
 //{
