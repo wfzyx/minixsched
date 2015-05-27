@@ -10,7 +10,7 @@ MAN=
 BINDIR?= /usr/sbin
 
 CPPFLAGS.main.c+=	-I${NETBSDSRCDIR}
-# CPPFLAGS.schedule.c+=	-I${NETBSDSRCDIR}
+#CPPFLAGS.schedule.c+=	-I${NETBSDSRCDIR}
 CPPFLAGS.utility.c+=	-I${NETBSDSRCDIR}
 CPPFLAGS.schedproc.cpp+=	-I${NETBSDSRCDIR}
 
