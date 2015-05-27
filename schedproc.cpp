@@ -1,5 +1,27 @@
 #include "schedproc.h"
 
+#define SCHEDULE_CHANGE_PRIO	0x1
+#define SCHEDULE_CHANGE_QUANTUM	0x2
+#define SCHEDULE_CHANGE_CPU	0x4
+
+#define SCHEDULE_CHANGE_ALL	(	\
+		SCHEDULE_CHANGE_PRIO	|	\
+		SCHEDULE_CHANGE_QUANTUM	|	\
+		SCHEDULE_CHANGE_CPU		\
+		)
+
+#define schedule_process_local(p)	\
+	schedule_process(p, SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)
+#define schedule_process_migrate(p)	\
+	schedule_process(p, SCHEDULE_CHANGE_CPU)
+
+#define CPU_DEAD	-1
+
+#define cpu_is_available(c)	(cpu_proc[c] >= 0)
+
+#define DEFAULT_USER_TIME_SLICE 200
+#define INC_PER_QUEUE 10
+
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
@@ -82,6 +104,40 @@ void Schedproc::pick_cpu()
 #else
 	this->cpu = 0;
 #endif
+}
+
+int Schedproc::do_noquantum(message *m_ptr) {
+	int rv, proc_nr_n;
+	unsigned ipc, burst, queue_bump;
+	short load;
+
+	/*if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
+		cout << "SCHED: WARNING: got an invalid endpoint in OOQ msg " <<  m_ptr->m_source << ".\n";
+		return EBADEPT;
+	}*/
+
+	//rmp = &schedproc[proc_nr_n];
+
+	ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
+
+	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
+	
+	burst = (this->time_slice * 1000 / ipc) / 100;
+	burst = burst_smooth(rmp, burst);
+
+	queue_bump = burst/INC_PER_QUEUE;
+
+	if (this->max_priority + queue_bump > MIN_USER_Q) {
+		queue_bump = MIN_USER_Q - this->max_priority;
+	}
+
+	this->priority = this->max_priority + queue_bump;
+	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
+
+	/*if ((rv = schedule_process_local(rmp)) != OK) {
+		return rv;
+	}*/
+	return OK;
 }
 
 int Schedproc::burst_smooth(unsigned burst)
