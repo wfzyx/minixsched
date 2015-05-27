@@ -35,22 +35,22 @@
 // 	burst_hist_cnt = argStruct.burst_hist_cnt;
 // }
 
-Schedproc::Schedproc(Schedproc src)
-{
-	this->endpoint = src->endpoint;	/* process endpoint id */
-	this->parent = src->parent;		/* parent endpoint id */
-	this->flags = src->flags;			/* flag bits */
-
-	/* User space scheduling */
-	this->max_priority = src->max_priority;		/* this process' highest allowed priority */
-	this->priority = src->priority;			/* the process' current priority */
-	this->base_time_slice = src->base_time_slice;
-	this->time_slice = src->time_slice;		/* this process's time slice */
-	this->cpu = src->cpu;
-	this->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)] = src->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-	this->burst_history[BURST_HISTORY_LENGTH] = src->burst_history[BURST_HISTORY_LENGTH];
-	this->burst_hist_cnt = src->burst_hist_cnt;
-}
+//Schedproc::Schedproc(Schedproc src)
+//{
+	//this->endpoint = src->endpoint;	/* process endpoint id */
+	//this->parent = src->parent;		/* parent endpoint id */
+	//this->flags = src->flags;			/* flag bits */
+//
+	///* User space scheduling */
+//	this->max_priority = src->max_priority;		/* this process' highest allowed priority */
+	//this->priority = src->priority;			/* the process' current priority */
+	//this->base_time_slice = src->base_time_slice;
+	//this->time_slice = src->time_slice;		/* this process's time slice */
+	//this->cpu = src->cpu;
+	//this->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)] = src->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+	//this->burst_history[BURST_HISTORY_LENGTH] = src->burst_history[BURST_HISTORY_LENGTH];
+	//this->burst_hist_cnt = src->burst_hist_cnt;
+//}
 
 int Schedproc::do_stop_scheduling(message *m_ptr)
 {
@@ -66,7 +66,7 @@ int Schedproc::do_stop_scheduling(message *m_ptr)
 		return EBADEPT;
 	}
 
-	this = listSched[proc_nr_n];
+	//this = listSched[proc_nr_n];
 #ifdef CONFIG_SMP
 	cpu_proc[this->cpu]--;
 #endif
