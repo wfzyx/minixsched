@@ -1,5 +1,27 @@
 #include "schedproc.h"
 
+#define SCHEDULE_CHANGE_PRIO	0x1
+#define SCHEDULE_CHANGE_QUANTUM	0x2
+#define SCHEDULE_CHANGE_CPU	0x4
+
+#define SCHEDULE_CHANGE_ALL	(	\
+		SCHEDULE_CHANGE_PRIO	|	\
+		SCHEDULE_CHANGE_QUANTUM	|	\
+		SCHEDULE_CHANGE_CPU		\
+		)
+
+#define schedule_process_local(p)	\
+	schedule_process(p, SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)
+#define schedule_process_migrate(p)	\
+	schedule_process(p, SCHEDULE_CHANGE_CPU)
+
+#define CPU_DEAD	-1
+
+#define cpu_is_available(c)	(cpu_proc[c] >= 0)
+
+#define DEFAULT_USER_TIME_SLICE 200
+#define INC_PER_QUEUE 10
+
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
