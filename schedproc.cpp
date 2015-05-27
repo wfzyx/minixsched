@@ -52,6 +52,38 @@
 	//this->burst_hist_cnt = src->burst_hist_cnt;
 //}
 
+void Schedproc::pick_cpu()
+{
+#ifdef CONFIG_SMP
+	unsigned cpu, c;
+	unsigned cpu_load = (unsigned) -1;
+
+	if (machine.processors_count == 1) {
+		this->cpu = machine.bsp_id;
+		return;
+	}
+
+	if (is_system_proc(this)) {
+		this->cpu = machine.bsp_id;
+		return;
+	}
+
+	cpu = machine.bsp_id;
+	for (c = 0; c < machine.processors_count; c++) {
+		if (!cpu_is_available(c))
+			continue;
+		if (c != machine.bsp_id && cpu_load > cpu_proc[c]) {
+			cpu_load = cpu_proc[c];
+			cpu = c;
+		}
+	}
+	this->cpu = cpu;
+	cpu_proc[cpu]++;
+#else
+	this->cpu = 0;
+#endif
+}
+
 int Schedproc::burst_smooth(unsigned burst)
 {
 	int i;
