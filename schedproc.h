@@ -61,7 +61,7 @@
 
 class Schedproc
 {
-	private:
+	public:
 	   	endpoint_t endpoint;	/* process endpoint id */
 		endpoint_t parent;		/* parent endpoint id */
 		unsigned flags;			/* flag bits */
@@ -75,7 +75,6 @@ class Schedproc
 		bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 		unsigned burst_history[BURST_HISTORY_LENGTH];
 		unsigned burst_hist_cnt;
-	public:
 	    // void setValues(struct schedproc argStruct);
 	    // struct schedproc toStruct ();
 	    int do_stop_scheduling(message *m_ptr);

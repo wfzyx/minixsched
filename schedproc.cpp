@@ -35,6 +35,11 @@
 // 	burst_hist_cnt = argStruct.burst_hist_cnt;
 // }
 
+Schedproc::Schedproc(Schedproc src)
+{
+
+}
+
 int Schedproc::do_stop_scheduling(message *m_ptr)
 {
 	int proc_nr_n;
