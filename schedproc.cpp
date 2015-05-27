@@ -151,3 +151,73 @@ int sched_isemtyendpt(int endpoint, int *proc)
 		return (EDEADEPT);
 	return (OK);
 }
+
+
+{
+	int rv;
+	int proc_nr_n;
+	unsigned new_q, old_q, old_max_q;
+
+	/* check who can send you requests */
+	if (!accept_message(m_ptr))
+		return EPERM;
+
+	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg "
+		"%ld\n", m_ptr->SCHEDULING_ENDPOINT);
+		return EBADEPT;
+	}
+
+	//rmp = &schedproc[proc_nr_n];
+	new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	if (new_q >= NR_SCHED_QUEUES) {
+		return EINVAL;
+	}
+
+	/* Store old values, in case we need to roll back the changes */
+	old_q     = this->priority;
+	old_max_q = this->max_priority;
+
+	/* Update the proc entry and reschedule the process */
+	this->max_priority = this->priority = new_q;
+
+	if ((rv = schedule_process_local(this::toStruct())) != OK) {
+		/* Something went wrong when rescheduling the process, roll
+		 * back the changes to proc struct */
+		this->priority     = old_q;
+		this->max_priority = old_max_q;
+	}
+
+	return rv;
+}
+
+int schedule_process(unsigned flags)
+{
+	int err;
+	int new_prio, new_quantum, new_cpu;
+
+	pick_cpu(this::toStruct());
+
+	if (flags & SCHEDULE_CHANGE_PRIO)
+		new_prio = this->priority;
+	else
+		new_prio = -1;
+
+	if (flags & SCHEDULE_CHANGE_QUANTUM)
+		new_quantum = this->time_slice;
+	else
+		new_quantum = -1;
+
+	if (flags & SCHEDULE_CHANGE_CPU)
+		new_cpu = this->cpu;
+	else
+		new_cpu = -1;
+
+	if ((err = sys_schedule(this->endpoint, new_prio,
+		new_quantum, new_cpu)) != OK) {
+		printf("PM: An error occurred when trying to schedule %d: %d\n",
+		this->endpoint, err);
+	}
+
+	return err;
+}

@@ -83,6 +83,8 @@ class Schedproc
 	    int do_stop_scheduling(message *m_ptr);
 	    int sched_isokendpt(int endpoint, int *proc);
 	    int sched_isemtyendpt(int endpoint, int *proc);
+	    int schedule_process(unsigned flags);
+	    int do_nice()
 };
 
 extern Schedproc listSched[NR_PROCS];
