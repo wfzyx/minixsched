@@ -52,6 +52,26 @@
 	//this->burst_hist_cnt = src->burst_hist_cnt;
 //}
 
+int Schedproc::burst_smooth(unsigned burst)
+{
+	int i;
+	unsigned avg_burst = 0;
+
+	this->burst_history[this->burst_hist_cnt++ % 
+BURST_HISTORY_LENGTH] = burst;
+
+	for (i=0; i<BURST_HISTORY_LENGTH; i++)
+	{
+		if (i >= this->burst_hist_cnt) {
+			break;
+		}
+		avg_burst += this->burst_history[i];
+	}	
+	avg_burst /= i;
+
+	return avg_burst;
+}
+
 int Schedproc::do_stop_scheduling(message *m_ptr)
 {
 	int proc_nr_n;
