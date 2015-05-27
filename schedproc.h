@@ -41,23 +41,23 @@
 // } schedproc[NR_PROCS];
 
 // /* Flag values */
-// #define IN_USE		0x00001	/* set when 'schedproc' slot in use */
 
 // TODO: CHECK THESE INCLUDES
 
 #ifndef SCHD_H
 #define SCHD_H
-#include <list>
+#define IN_USE		0x00001	/* set when 'schedproc' slot in use */
 #include <limits.h>
 #include <minix/bitmap.h>
 #include "sched.h"
-
 
 #ifndef CONFIG_SMP
 #define CONFIG_MAX_CPUS 1
 #endif
 
 #define BURST_HISTORY_LENGTH 10
+
+#ifdef __cplusplus
 
 class Schedproc
 {
@@ -78,9 +78,12 @@ class Schedproc
   	public:
 	    // void setValues(struct schedproc argStruct);
 	    // struct schedproc toStruct ();
-	    do_stop_scheduling(message *m_ptr);
+	    int do_stop_scheduling(message *m_ptr);
  };
 
- extern std::list<Schedproc> listSched(NR_PROCS)
-
+ extern Schedproc listSched[NR_PROCS];
+#else
+typedef struct schedproc{} sched;
+extern struct schedproc schedproc[NR_PROCS];
+#endif
  #endif

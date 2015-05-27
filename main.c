@@ -7,8 +7,7 @@
 #define _MAIN
 
 #include "sched.h"
-#include "schedproc.h"
-#include "c_schedproc.h"
+//#include "schedproc.h"
 
 /* Declare some local functions. */
 static void reply(endpoint_t whom, message *m_ptr);
