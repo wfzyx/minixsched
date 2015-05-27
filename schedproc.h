@@ -75,15 +75,19 @@ class Schedproc
 		bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 		unsigned burst_history[BURST_HISTORY_LENGTH];
 		unsigned burst_hist_cnt;
-  	public:
+	public:
 	    // void setValues(struct schedproc argStruct);
 	    // struct schedproc toStruct ();
 	    int do_stop_scheduling(message *m_ptr);
- };
+	    int sched_isokendpt(int endpoint, int *proc);
+	    int sched_isemtyendpt(int endpoint, int *proc);
+};
 
- extern Schedproc listSched[NR_PROCS];
+extern Schedproc listSched[NR_PROCS];
+
 #else
 typedef struct schedproc{} sched;
 extern struct schedproc schedproc[NR_PROCS];
 #endif
- #endif
+
+#endif

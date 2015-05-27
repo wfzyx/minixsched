@@ -25,38 +25,6 @@ int no_sys(int who_e, int call_nr)
 
 
 /*===========================================================================*
- *				sched_isokendpt			 	     *
- *===========================================================================*/
-int sched_isokendpt(int endpoint, int *proc)
-{
-	*proc = _ENDPOINT_P(endpoint);
-	if (*proc < 0)
-		return (EBADEPT); /* Don't schedule tasks */
-	if(*proc >= NR_PROCS)
-		return (EINVAL);
-	if(endpoint != schedproc[*proc].endpoint)
-		return (EDEADEPT);
-	if(!(schedproc[*proc].flags & IN_USE))
-		return (EDEADEPT);
-	return (OK);
-}
-
-/*===========================================================================*
- *				sched_isemtyendpt		 	     *
- *===========================================================================*/
-int sched_isemtyendpt(int endpoint, int *proc)
-{
-	*proc = _ENDPOINT_P(endpoint);
-	if (*proc < 0)
-		return (EBADEPT); /* Don't schedule tasks */
-	if(*proc >= NR_PROCS)
-		return (EINVAL);
-	if(schedproc[*proc].flags & IN_USE)
-		return (EDEADEPT);
-	return (OK);
-}
-
-/*===========================================================================*
  *				accept_message				     *
  *===========================================================================*/
 int accept_message(message *m_ptr)
