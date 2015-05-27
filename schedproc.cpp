@@ -182,7 +182,10 @@ int Schedproc::do_nice(message *m_ptr)
 	/* Update the proc entry and reschedule the process */
 	this->max_priority = this->priority = new_q;
 
-	if ((rv = schedule_process_local(this::toStruct())) != OK) {
+// TODO: Check from where flags should come
+        unsigned flags_placeholder = 0;
+	if ((rv = this->schedule_process(flags_placeholder)) != OK) 
+{
 		/* Something went wrong when rescheduling the process, roll
 		 * back the changes to proc struct */
 		this->priority     = old_q;
@@ -197,7 +200,7 @@ int Schedproc::schedule_process(unsigned flags)
 	int err;
 	int new_prio, new_quantum, new_cpu;
 
-	pick_cpu(this::toStruct());
+	this->pick_cpu();
 
 	if (flags & SCHEDULE_CHANGE_PRIO)
 		new_prio = this->priority;
