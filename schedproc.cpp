@@ -153,7 +153,7 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 }
 
 
-int Schedproc::do_nice()
+int Schedproc::do_nice(message *m_ptr)
 {
 	int rv;
 	int proc_nr_n;
