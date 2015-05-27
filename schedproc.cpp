@@ -284,3 +284,119 @@ int Schedproc::schedule_process(unsigned flags)
 
 	return err;
 }
+
+int Schedproc::do_start_scheduling(message *m_ptr)
+{
+	int rv, proc_nr_n, parent_nr_n;
+	
+	/* we can handle two kinds of messages here */
+	assert(m_ptr->m_type == SCHEDULING_START || 
+		m_ptr->m_type == SCHEDULING_INHERIT);
+
+	/* check who can send you requests */
+	if (!accept_message(m_ptr))
+		return EPERM;
+
+	/* Resolve endpoint to proc slot. */
+	if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
+			!= OK) {
+		return rv;
+	}
+
+// TODO IMPLEMENT COPY()
+//	this = &schedproc[proc_nr_n];
+
+	/* Populate process slot */
+	this->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
+	this>parent       = m_ptr->SCHEDULING_PARENT;
+	this->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	this->burst_hist_cnt = 0;
+	if (this->max_priority >= NR_SCHED_QUEUES) {
+		return EINVAL;
+	}
+
+	/* Inherit current priority and time slice from parent. Since there
+	 * is currently only one scheduler scheduling the whole system, this
+	 * value is local and we assert that the parent endpoint is valid */
+	if (this->endpoint == this->parent) {
+		/* We have a special case here for init, which is the first
+		   process scheduled, and the parent of itself. */
+		this->priority   = USER_Q;
+		this->time_slice = DEFAULT_USER_TIME_SLICE;
+
+		/*
+		 * Since kernel never changes the cpu of a process, all are
+		 * started on the BSP and the userspace scheduling hasn't
+		 * changed that yet either, we can be sure that BSP is the
+		 * processor where the processes run now.
+		 */
+#ifdef CONFIG_SMP
+		this->cpu = machine.bsp_id;
+		/* FIXME set the cpu mask */
+#endif
+	}
+	
+	switch (m_ptr->m_type) {
+
+	case SCHEDULING_START:
+		/* We have a special case here for system processes, for which
+		 * quanum and priority are set explicitly rather than inherited 
+		 * from the parent */
+		this->priority   = this->max_priority;
+		this->time_slice = (unsigned) m_ptr->SCHEDULING_QUANTUM;
+		this->base_time_slice = this->time_slice;
+		break;
+		
+	case SCHEDULING_INHERIT:
+		/* Inherit current priority and time slice from parent. Since there
+		 * is currently only one scheduler scheduling the whole system, this
+		 * value is local and we assert that the parent endpoint is valid */
+		if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,
+				&parent_nr_n)) != OK)
+			return rv;
+
+		this->priority = schedproc[parent_nr_n].priority;
+		this->time_slice = schedproc[parent_nr_n].time_slice;
+		this->base_time_slice = this->time_slice;
+		break;
+		
+	default: 
+		/* not reachable */
+		assert(0);
+	}
+
+	/* Take over scheduling the process. The kernel reply message populates
+	 * the processes current priority and its time slice */
+	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
+			this->endpoint, rv);
+		return rv;
+	}
+	this->flags = IN_USE;
+
+	/* Schedule the process, giving it some quantum */
+	this->pick_cpu();
+	while ((rv = this->schedule_process(SCHEDULE_CHANGE_ALL)) == EBADCPU) {
+		/* don't try this CPU ever again */
+		cpu_proc[this->cpu] = CPU_DEAD;
+		this->pick_cpu();
+	}
+
+	if (rv != OK) {
+		printf("Sched: Error while scheduling process, kernel replied %d\n",
+			rv);
+		return rv;
+	}
+
+	/* Mark ourselves as the new scheduler.
+	 * By default, processes are scheduled by the parents scheduler. In case
+	 * this scheduler would want to delegate scheduling to another
+	 * scheduler, it could do so and then write the endpoint of that
+	 * scheduler into SCHEDULING_SCHEDULER
+	 */
+
+	m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
+
+	return OK;
+}
+
