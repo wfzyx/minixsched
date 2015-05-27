@@ -78,6 +78,7 @@ class Schedproc
 	    // void setValues(struct schedproc argStruct);
 	    // struct schedproc toStruct ();
 	    // Schedproc(Schedproc &cSrc);
+	    int burst_smooth(unsigned burst);
 	    int do_stop_scheduling(message *m_ptr);
 	    int sched_isokendpt(int endpoint, int *proc);
 	    int sched_isemtyendpt(int endpoint, int *proc);
