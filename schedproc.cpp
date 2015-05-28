@@ -25,7 +25,7 @@
 
 #define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
-static unsigned cpu_proc[CONFIG_MAX_CPUS];
+unsigned cpu_proc[CONFIG_MAX_CPUS];
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
