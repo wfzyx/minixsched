@@ -42,7 +42,7 @@
 // }
 
 
-void Schedproc::setValues (Schedroc &src)
+void Schedproc::setValues (Schedroc const &src)
 {
 	endpoint = src.endpoint;
 	parent = src.parent;
