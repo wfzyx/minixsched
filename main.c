@@ -12,8 +12,8 @@
 /* Declare some local functions. */
 static void reply(endpoint_t whom, message *m_ptr);
 static void sef_local_startup(void);
+struct Schedproc* p;
 double call_Schedproc_do_start_scheduling(struct Schedproc* p, message *m_ptr);
-
 struct machine machine;		/* machine info */
 
 /*===========================================================================*
@@ -63,7 +63,7 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = call_Schedproc_do_start_scheduling(struct Schedproc* p, &m_in);
+			result = call_Schedproc_do_start_scheduling(p, &m_in);
 			break;
 		case SCHEDULING_STOP:
 			result = do_stop_scheduling(&m_in);
