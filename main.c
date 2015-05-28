@@ -63,7 +63,7 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = call_Schedproc_do_start_scheduling(&m_in);
+			result = call_Schedproc_do_start_scheduling(struct Schedproc* p, &m_in);
 			break;
 		case SCHEDULING_STOP:
 			result = do_stop_scheduling(&m_in);
