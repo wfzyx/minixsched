@@ -1,3 +1,4 @@
+#include "sched.h"
 #include "schedproc.h"
 #include <assert.h>
 
@@ -18,14 +19,13 @@
 
 #define CPU_DEAD	-1
 
-#define cpu_is_available(c)	(cpu_proc[c] >= 0)
-
 #define DEFAULT_USER_TIME_SLICE 200
 #define INC_PER_QUEUE 10
 
-#define is_system_proc(p)	((p)->parent == RS_PROC_NR)
-
 unsigned cpu_proc[CONFIG_MAX_CPUS];
+
+#define cpu_is_available(c)	(cpu_proc[c] >= 0)
+#define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
