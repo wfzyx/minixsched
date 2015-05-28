@@ -23,6 +23,9 @@
 #define DEFAULT_USER_TIME_SLICE 200
 #define INC_PER_QUEUE 10
 
+#define is_system_proc(p)	((p)->parent == RS_PROC_NR)
+
+static unsigned cpu_proc[CONFIG_MAX_CPUS];
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
