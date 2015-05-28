@@ -91,7 +91,9 @@ class Schedproc
 	    int accept_message(message *m_ptr);
 };
 
-extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
+extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr);
+
+int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 {
 	return p->do_start_scheduling(m_ptr);
 }
