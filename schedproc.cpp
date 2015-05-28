@@ -3,11 +3,11 @@
 #include <assert.h>
 
 
-
+#include <minix/com.h>
 #include "sched.h"
 #include <machine/archtypes.h>
 #include <sys/resource.h> /* for PRIO_MAX & PRIO_MIN */
-#include "kernel/proc.h" /* for queue constants */
+//#include "kernel/proc.h" /* for queue constants */
 #include "schedproc.h"
 
 
@@ -216,10 +216,11 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(endpoint != schedproc[*proc]->endpoint)
-		return (EDEADEPT);
-	if(!(schedproc[*proc]->flags & IN_USE))
-		return (EDEADEPT);
+//      TODO Check objects vector
+//	if(endpoint != (schedproc[*proc])->endpoint)
+//		return (EDEADEPT);
+//	if(!(schedproc[*proc]->flags & IN_USE))
+//		return (EDEADEPT);
 	return (OK);
 }
 
@@ -230,8 +231,9 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(schedproc[*proc]->flags & IN_USE)
-		return (EDEADEPT);
+//      TODO Check objects vector
+//	if(schedproc[*proc]->flags & IN_USE)
+//		return (EDEADEPT);
 	return (OK);
 }
 
@@ -302,7 +304,7 @@ int Schedproc::schedule_process(unsigned flags)
 
 	if ((err = sys_schedule(this->endpoint, new_prio,
 		new_quantum, new_cpu)) != OK) {
-		cout << "PM: An error occurred when trying to schedule " << this->endpoint << ": " << err;
+		printf("PM: An error occurred when trying to schedule %d: %d\n",this->endpoint, err);
 	}
 
 	return err;
@@ -378,8 +380,8 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 				&parent_nr_n)) != OK)
 			return rv;
 
-		this->priority = schedproc[parent_nr_n].priority;
-		this->time_slice = schedproc[parent_nr_n].time_slice;
+//		this->priority = schedproc[parent_nr_n].priority;
+//		this->time_slice = schedproc[parent_nr_n].time_slice;
 		this->base_time_slice = this->time_slice;
 		break;
 		
