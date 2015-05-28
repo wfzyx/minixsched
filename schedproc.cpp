@@ -391,11 +391,11 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
 	//TODO CHECK EXTERN C
-	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
-		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
-			this->endpoint, rv);
-		return rv;
-	}
+//	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+//		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
+//			this->endpoint, rv);
+//		return rv;
+//	}
 	this->flags = IN_USE;
 
 	/* Schedule the process, giving it some quantum */
