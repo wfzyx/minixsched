@@ -89,7 +89,7 @@ class Schedproc
 	    int do_start_scheduling(message *m_ptr);
 };
 
-extern Schedproc listSched[NR_PROCS];
+extern Schedproc schedproc[NR_PROCS];
 
 #else
 typedef struct schedproc{} sched;

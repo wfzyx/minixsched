@@ -1,4 +1,5 @@
 #include "schedproc.h"
+#include <assert.h>
 
 #define SCHEDULE_CHANGE_PRIO	0x1
 #define SCHEDULE_CHANGE_QUANTUM	0x2
@@ -42,20 +43,22 @@
 // }
 
 
-void Schedproc::setValues (Schedroc const &src)
-{
-	endpoint = src.endpoint;
-	parent = src.parent;
-	flags = src.flags;
-	max_priority = src.max_priority;
-	priority = src.priority;
-	base_time_slice = src.base_time_slice;
-	time_slice = src.time_slice;
-	cpu = src.cpu;
-	cpu_mask[BITMAP_CHUNKS = src.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-	burst_history[BURST_HISTORY_LENGTH] = src.burst_history[BURST_HISTORY_LENGTH];
-	burst_hist_cnt = src.burst_hist_cnt;
-}
+//void Schedproc::setValues (Schedroc const &src)
+//{
+//	endpoint = src.endpoint;
+//	parent = src.parent;
+//	flags = src.flags;
+//	max_priority = src.max_priority;
+//	priority = src.priority;
+//	base_time_slice = src.base_time_slice;
+//	time_slice = src.time_slice;
+//	cpu = src.cpu;
+//	cpu_mask[BITMAP_CHUNKS = 
+//src.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
+//	burst_history[BURST_HISTORY_LENGTH] = 
+//src.burst_history[BURST_HISTORY_LENGTH];
+//	burst_hist_cnt = src.burst_hist_cnt;
+//}
 
 //Schedproc::Schedproc(Schedproc src)
 //{
@@ -177,7 +180,7 @@ int Schedproc::do_stop_scheduling(message *m_ptr)
 		return EBADEPT;
 	}
 
-	//this = listSched[proc_nr_n];
+	//this = schedproc[proc_nr_n];
 #ifdef CONFIG_SMP
 	cpu_proc[this->cpu]--;
 #endif
@@ -192,9 +195,9 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(endpoint != listSched[*proc].endpoint)
+	if(endpoint != schedproc[*proc].endpoint)
 		return (EDEADEPT);
-	if(!(listSched[*proc].flags & IN_USE))
+	if(!(schedproc[*proc].flags & IN_USE))
 		return (EDEADEPT);
 	return (OK);
 }
@@ -206,7 +209,7 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(listSched[*proc].flags & IN_USE)
+	if(schedproc[*proc].flags & IN_USE)
 		return (EDEADEPT);
 	return (OK);
 }
@@ -308,7 +311,7 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 
 	/* Populate process slot */
 	this->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
-	this>parent       = m_ptr->SCHEDULING_PARENT;
+	this->parent       = m_ptr->SCHEDULING_PARENT;
 	this->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
 	this->burst_hist_cnt = 0;
 	if (this->max_priority >= NR_SCHED_QUEUES) {
