@@ -87,6 +87,8 @@ class Schedproc
 	    int schedule_process(unsigned flags);
 	    int do_nice(message *m_ptr);
 	    int do_start_scheduling(message *m_ptr);
+	    int no_sys(int who_e, int call_nr);
+	    int accept_message(message *m_ptr);
 };
 
 extern Schedproc schedproc[NR_PROCS];

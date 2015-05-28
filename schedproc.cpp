@@ -2,6 +2,18 @@
 #include "schedproc.h"
 #include <assert.h>
 
+
+
+#include "sched.h"
+#include <machine/archtypes.h>
+#include <sys/resource.h> /* for PRIO_MAX & PRIO_MIN */
+#include "kernel/proc.h" /* for queue constants */
+#include "schedproc.h"
+
+
+
+
+
 #define SCHEDULE_CHANGE_PRIO	0x1
 #define SCHEDULE_CHANGE_QUANTUM	0x2
 #define SCHEDULE_CHANGE_CPU	0x4
@@ -198,9 +210,9 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(endpoint != schedproc[*proc].endpoint)
+	if(endpoint != schedproc[*proc]->endpoint)
 		return (EDEADEPT);
-	if(!(schedproc[*proc].flags & IN_USE))
+	if(!(schedproc[*proc]->flags & IN_USE))
 		return (EDEADEPT);
 	return (OK);
 }
@@ -212,7 +224,7 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(schedproc[*proc].flags & IN_USE)
+	if(schedproc[*proc]->flags & IN_USE)
 		return (EDEADEPT);
 	return (OK);
 }
@@ -406,3 +418,24 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 	return OK;
 }
 
+int Schedproc::no_sys(int who_e, int call_nr)
+{
+/* A system call number not implemented by PM has been requested. */
+  printf("SCHED: in no_sys, call nr %d from %d\n", call_nr, who_e);
+  return(ENOSYS);
+}
+
+
+int Schedproc::accept_message(message *m_ptr)
+{
+	/* accept all messages from PM and RS */
+	switch (m_ptr->m_source) {
+
+		case PM_PROC_NR:
+		case RS_PROC_NR:
+			return 1;
+	}
+	
+	/* no other messages are allowable */
+	return 0;
+}
