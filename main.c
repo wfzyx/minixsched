@@ -13,7 +13,7 @@
 static void reply(endpoint_t whom, message *m_ptr);
 static void sef_local_startup(void);
 struct Schedproc* p;
-double call_Schedproc_do_start_scheduling(struct Schedproc* p, message *m_ptr);
+int call_Schedproc_do_start_scheduling(struct Schedproc* p, message *m_ptr);
 struct machine machine;		/* machine info */
 
 /*===========================================================================*
