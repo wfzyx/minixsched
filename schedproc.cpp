@@ -39,6 +39,8 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 #define cpu_is_available(c)	(cpu_proc[c] >= 0)
 #define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
+extern "C" int sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
+
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
 // {
@@ -296,8 +298,7 @@ int Schedproc::schedule_process(unsigned flags)
 
 	if ((err = sys_schedule(this->endpoint, new_prio,
 		new_quantum, new_cpu)) != OK) {
-		printf("PM: An error occurred when trying to schedule %d: %d\n",
-		this->endpoint, err);
+		cout << "PM: An error occurred when trying to schedule " << this->endpoint << ": " << err;
 	}
 
 	return err;
