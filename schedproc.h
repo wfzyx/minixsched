@@ -91,6 +91,11 @@ class Schedproc
 	    int accept_message(message *m_ptr);
 };
 
+extern "C" double call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
+{
+	return p->do_start_scheduling(m_ptr);
+}
+
 extern Schedproc schedproc[NR_PROCS];
 
 #else

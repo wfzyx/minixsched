@@ -7,7 +7,7 @@
 #define _MAIN
 
 #include "sched.h"
-//#include "schedproc.h"
+#include "schedproc.h"
 
 /* Declare some local functions. */
 static void reply(endpoint_t whom, message *m_ptr);
@@ -62,7 +62,7 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = do_start_scheduling(&m_in);
+			result = call_Schedproc_do_start_scheduling(&m_in);
 			break;
 		case SCHEDULING_STOP:
 			result = do_stop_scheduling(&m_in);
