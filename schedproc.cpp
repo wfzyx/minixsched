@@ -133,11 +133,12 @@ int Schedproc::do_noquantum(message *m_ptr) {
 	unsigned ipc, burst, queue_bump;
 	short load;
 
-	/*if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
-		cout << "SCHED: WARNING: got an invalid endpoint in OOQ msg " <<  m_ptr->m_source << ".\n";
+	if (this->sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
+		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg %u.\n",m_ptr->m_source);
 		return EBADEPT;
-	}*/
+	}
 
+	// TODO : ROTINA DE COPIA
 	//rmp = &schedproc[proc_nr_n];
 
 	ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
@@ -145,8 +146,8 @@ int Schedproc::do_noquantum(message *m_ptr) {
 	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 	
 	burst = (this->time_slice * 1000 / ipc) / 100;
-// TODO CHECK THIS ?!?!?!?!
-//	burst = burst_smooth(rmp, burst);
+	
+	burst = this->burst_smooth(burst);
 
 	queue_bump = burst/INC_PER_QUEUE;
 
@@ -157,7 +158,7 @@ int Schedproc::do_noquantum(message *m_ptr) {
 	this->priority = this->max_priority + queue_bump;
 	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
 
-// TODO CHECK WHERE IN HELL THE FLAG SHOULD COME FROM
+	// TODO CHECK WHERE IN HELL THE FLAG SHOULD COME FROM
         unsigned placeholder = 0;
 	if ((rv = this->schedule_process(placeholder)) != OK) {
 		return rv;
@@ -242,15 +243,15 @@ int Schedproc::do_nice(message *m_ptr)
 	unsigned new_q, old_q, old_max_q;
 
 	/* check who can send you requests */
-	if (!accept_message(m_ptr))
+	if (!this->accept_message(m_ptr))
 		return EPERM;
 
-	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
-		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg "
-		"%ld\n", m_ptr->SCHEDULING_ENDPOINT);
+	if (this->sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->SCHEDULING_ENDPOINT);
 		return EBADEPT;
 	}
 
+	// TODO : ROTINA DE COPIA
 	//rmp = &schedproc[proc_nr_n];
 	new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
 	if (new_q >= NR_SCHED_QUEUES) {
@@ -264,10 +265,10 @@ int Schedproc::do_nice(message *m_ptr)
 	/* Update the proc entry and reschedule the process */
 	this->max_priority = this->priority = new_q;
 
-// TODO: Check from where flags should come
+	// TODO: Check from where flags should come
         unsigned flags_placeholder = 0;
 	if ((rv = this->schedule_process(flags_placeholder)) != OK) 
-{
+	{
 		/* Something went wrong when rescheduling the process, roll
 		 * back the changes to proc struct */
 		this->priority     = old_q;
