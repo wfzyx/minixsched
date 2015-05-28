@@ -94,8 +94,8 @@ class Schedproc
 extern Schedproc schedproc[NR_PROCS];
 
 #else
-typedef struct schedproc{} sched;
-extern struct schedproc schedproc[NR_PROCS];
+	typedef struct Schedproc Schedproc;
+	extern struct Schedproc schedproc[NR_PROCS];
 #endif
 
 
