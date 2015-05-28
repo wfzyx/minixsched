@@ -24,6 +24,8 @@
 		SCHEDULE_CHANGE_CPU		\
 		)
 
+
+// FAZER OVERLOADS
 #define schedule_process_local(p)	\
 	schedule_process(p, SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)
 #define schedule_process_migrate(p)	\
@@ -188,15 +190,16 @@ int Schedproc::do_stop_scheduling(message *m_ptr)
 	int proc_nr_n;
 
 	/* check who can send you requests */
-	if (!accept_message(m_ptr))
+	if (!this->accept_message(m_ptr))
 		return EPERM;
 
-	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+	if (this->sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
 		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg "
 		"%ld\n", m_ptr->SCHEDULING_ENDPOINT);
 		return EBADEPT;
 	}
 
+    // TODO : COPY ROUTINE
 	//this = schedproc[proc_nr_n];
 #ifdef CONFIG_SMP
 	cpu_proc[this->cpu]--;
@@ -313,11 +316,11 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 		m_ptr->m_type == SCHEDULING_INHERIT);
 
 	/* check who can send you requests */
-	if (!accept_message(m_ptr))
+	if (!this->accept_message(m_ptr))
 		return EPERM;
 
 	/* Resolve endpoint to proc slot. */
-	if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
+	if ((rv = this->sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
 			!= OK) {
 		return rv;
 	}
@@ -370,7 +373,7 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 		/* Inherit current priority and time slice from parent. Since there
 		 * is currently only one scheduler scheduling the whole system, this
 		 * value is local and we assert that the parent endpoint is valid */
-		if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,
+		if ((rv = this->sched_isokendpt(m_ptr->SCHEDULING_PARENT,
 				&parent_nr_n)) != OK)
 			return rv;
 
@@ -386,6 +389,7 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
+	//TODO CHECK EXTERN C
 	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
 			this->endpoint, rv);
