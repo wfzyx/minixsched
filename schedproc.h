@@ -57,7 +57,6 @@
 
 #define BURST_HISTORY_LENGTH 10
 
-
 #ifdef __cplusplus
 
 class Schedproc
@@ -95,24 +94,8 @@ class Schedproc
 extern Schedproc schedproc[NR_PROCS];
 
 #else
-	typedef struct Schedproc{} sched;
-	extern struct Schedproc schedproc[NR_PROCS];
+typedef struct schedproc{} sched;
+extern struct schedproc schedproc[NR_PROCS];
 #endif
 
-#ifdef __cplusplus
-	extern "C"	{
-#endif
-	int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr);
-	int dobroInt(int x);
-#ifdef __cplusplus
-	}
-#endif
-
-#ifdef __cplusplus
-int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
-{
-	return p->do_start_scheduling(m_ptr);
-}
-int dobroInt(int x){ return x*2; }
-#endif
 #endif

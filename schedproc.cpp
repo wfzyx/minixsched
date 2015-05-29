@@ -3,7 +3,7 @@
 #include <assert.h>
 
 
-#include <minix/com.h>
+
 #include "sched.h"
 #include <machine/archtypes.h>
 #include <sys/resource.h> /* for PRIO_MAX & PRIO_MIN */
@@ -216,11 +216,10 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-//      TODO Check objects vector
-//	if(endpoint != (schedproc[*proc])->endpoint)
-//		return (EDEADEPT);
-//	if(!(schedproc[*proc]->flags & IN_USE))
-//		return (EDEADEPT);
+	//if(endpoint != schedproc[*proc]->endpoint)
+	//	return (EDEADEPT);
+	//if(!(schedproc[*proc]->flags & IN_USE))
+	//	return (EDEADEPT);
 	return (OK);
 }
 
@@ -231,9 +230,8 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-//      TODO Check objects vector
-//	if(schedproc[*proc]->flags & IN_USE)
-//		return (EDEADEPT);
+	//if(schedproc[*proc]->flags & IN_USE)
+	//	return (EDEADEPT);
 	return (OK);
 }
 
@@ -380,8 +378,8 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 				&parent_nr_n)) != OK)
 			return rv;
 
-//		this->priority = schedproc[parent_nr_n].priority;
-//		this->time_slice = schedproc[parent_nr_n].time_slice;
+		//this->priority = schedproc[parent_nr_n].priority;
+		//this->time_slice = schedproc[parent_nr_n].time_slice;
 		this->base_time_slice = this->time_slice;
 		break;
 		
@@ -393,11 +391,11 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
 	//TODO CHECK EXTERN C
-//	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
-//		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
-//			this->endpoint, rv);
-//		return rv;
-//	}
+	/*if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
+			this->endpoint, rv);
+		return rv;
+	}*/
 	this->flags = IN_USE;
 
 	/* Schedule the process, giving it some quantum */
