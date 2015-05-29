@@ -37,7 +37,7 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 #define cpu_is_available(c)	(cpu_proc[c] >= 0)
 #define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
-extern "C" int sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
+extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 {
 	return p->Schedproc::do_start_scheduling(m_ptr);
