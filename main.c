@@ -128,3 +128,8 @@ static void sef_local_startup(void)
 	/* Let SEF perform startup. */
 	sef_startup();
 }
+
+
+void init_scheduling(void)
+{
+}
