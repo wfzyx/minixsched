@@ -92,18 +92,16 @@ class Schedproc
 };
 
 extern Schedproc schedproc[NR_PROCS];
-
-#else
-	typedef struct Schedproc Schedproc;
-	extern struct Schedproc schedproc[NR_PROCS];
-#endif
-
-
 extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr);
 
 int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 {
 	return p->do_start_scheduling(m_ptr);
 }
+
+#else
+	typedef struct Schedproc Schedproc;
+	extern struct Schedproc schedproc[NR_PROCS];
+#endif
 
 #endif
