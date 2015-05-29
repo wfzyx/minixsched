@@ -46,6 +46,21 @@ extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 {
 	return p->Schedproc::do_start_scheduling(m_ptr);
 }
+
+extern "C" int call_Schedproc_do_stop_scheduling(Schedproc* p, message *m_ptr)
+{
+	return p->Schedproc::do_stop_scheduling(m_ptr);
+}
+
+extern "C" int call_Schedproc_do_nice(Schedproc* p, message *m_ptr)
+{
+	return p->Schedproc::do_nice(m_ptr);
+}
+
+extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
+{
+	return p->Schedproc::do_noquantum(m_ptr);
+}
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
 // {

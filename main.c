@@ -16,6 +16,9 @@ static void sef_local_startup(void);
 struct machine machine;		/* machine info */
 struct M;
 int call_Schedproc_do_start_scheduling(struct M*, message *m_ptr);
+int call_Schedproc_do_stop_scheduling(struct M*, message *m_ptr);
+int call_Schedproc_do_nice(struct M*, message *m_ptr);
+int call_Schedproc_do_noquantum(struct M*, message *m_ptr);
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -28,7 +31,7 @@ int main(void)
 	int result;	/* result to system call */
 	int rv;
 	int s;
-	struct M* p;
+	struct M* p = NULL;
 
 	/* SEF local startup. */
 	sef_local_startup();
@@ -67,16 +70,16 @@ int main(void)
 			result = call_Schedproc_do_start_scheduling(p, &m_in);
 			break;
 		case SCHEDULING_STOP:
-			result = do_stop_scheduling(&m_in);
+			result = call_Schedproc_do_stop_scheduling(p, &m_in);
 			break;
 		case SCHEDULING_SET_NICE:
-			result = do_nice(&m_in);
+			result = call_Schedproc_do_nice(&m_in);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
 			if (IPC_STATUS_FLAGS_TEST(ipc_status,
 				IPC_FLG_MSG_FROM_KERNEL)) {
-				if ((rv = do_noquantum(&m_in)) != (OK)) {
+				if ((rv = call_Schedproc_do_noquantum(p, &m_in)) != (OK)) {
 					printf("SCHED: Warning, do_noquantum "
 						"failed with %d\n", rv);
 				}
