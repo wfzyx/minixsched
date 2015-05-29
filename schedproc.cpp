@@ -62,11 +62,6 @@ extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
 	return p->Schedproc::do_noquantum(m_ptr);
 }
 
-extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
-{
-	return p->Schedproc::do_noquantum(m_ptr);
-}
-
 // extern "C" int call_Schedproc_accept_message(Schedproc* p, message *m_ptr)
 // {
 // 	return p->Schedproc::accept_message(m_ptr);	
