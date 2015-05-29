@@ -326,7 +326,7 @@ int Schedproc::schedule_process(unsigned flags)
 	else
 		new_cpu = -1;
 
-	if ((err = sys_schedule(this->endpoint, new_prio,
+	if ((err = call_minix_sys_schedule(this->endpoint, new_prio,
 		new_quantum, new_cpu)) != OK) {
 		printf("PM: An error occurred when trying to schedule %d: %d\n",this->endpoint, err);
 	}

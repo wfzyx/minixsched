@@ -13,7 +13,7 @@
 static void reply(endpoint_t whom, message *m_ptr);
 static void sef_local_startup(void);
 static void init_scheduling(void);
-static void call_minix_sys_schedule(int w, int x, int y, int z);
+static int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 struct machine machine;		/* machine info */
 struct M;
 int call_Schedproc_do_start_scheduling(struct M*, message *m_ptr);
@@ -137,7 +137,7 @@ void init_scheduling(void)
 {
 }
 
-void call_minix_sys_schedule(int w, int x, int y, int z)
+int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 {
 	sys_schedule(w,x,y,z);
 }
