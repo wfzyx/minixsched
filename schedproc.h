@@ -100,7 +100,7 @@ int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 }
 
 #else
-	typedef struct Schedproc Schedproc;
+	typedef struct Schedproc{} sched;
 	extern struct Schedproc schedproc[NR_PROCS];
 #endif
 
