@@ -91,8 +91,6 @@ class Schedproc
 	    int accept_message(message *m_ptr);
 };
 
-extern Schedproc schedproc[NR_PROCS];
-
 #else
 typedef struct schedproc{} sched;
 extern struct schedproc schedproc[NR_PROCS];

@@ -70,6 +70,8 @@ extern "C" int call_Schedproc_no_sys(Schedproc* p, int who_e, int call_nr)
 }
 
 
+Schedproc schedproc[NR_PROCS];
+
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
 // {
@@ -243,10 +245,10 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	//if(endpoint != schedproc[*proc]->endpoint)
-	//	return (EDEADEPT);
-	//if(!(schedproc[*proc]->flags & IN_USE))
-	//	return (EDEADEPT);
+	if(endpoint != schedproc[*proc]->endpoint)
+		return (EDEADEPT);
+	if(!(schedproc[*proc]->flags & IN_USE))
+		return (EDEADEPT);
 	return (OK);
 }
 
@@ -257,8 +259,8 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	//if(schedproc[*proc]->flags & IN_USE)
-	//	return (EDEADEPT);
+	if(schedproc[*proc]->flags & IN_USE)
+		return (EDEADEPT);
 	return (OK);
 }
 
@@ -405,8 +407,8 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 				&parent_nr_n)) != OK)
 			return rv;
 
-		//this->priority = schedproc[parent_nr_n].priority;
-		//this->time_slice = schedproc[parent_nr_n].time_slice;
+		this->priority = schedproc[parent_nr_n]->priority;
+		this->time_slice = schedproc[parent_nr_n]->time_slice;
 		this->base_time_slice = this->time_slice;
 		break;
 		
