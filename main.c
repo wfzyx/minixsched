@@ -6,6 +6,7 @@
  * here. Used from within schedproc.h */
 #define _MAIN
 
+#include "proto.h"
 #include "sched.h"
 //#include "schedproc.h"
 
