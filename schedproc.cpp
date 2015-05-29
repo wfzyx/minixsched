@@ -1,16 +1,12 @@
 #include "sched.h"
 #include "schedproc.h"
+
 #include <assert.h>
-
-
-
-#include "sched.h"
+#include <minix/com.h>
+#include <timers.h>
 #include <machine/archtypes.h>
 #include <sys/resource.h> /* for PRIO_MAX & PRIO_MIN */
 #include "kernel/proc.h" /* for queue constants */
-#include "schedproc.h"
-
-
 
 
 
