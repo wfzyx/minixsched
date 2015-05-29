@@ -259,7 +259,7 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(schedproc[*proc]->flags & IN_USE)
+	if(schedproc[*proc].flags & IN_USE)
 		return (EDEADEPT);
 	return (OK);
 }
