@@ -61,6 +61,23 @@ extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
 {
 	return p->Schedproc::do_noquantum(m_ptr);
 }
+
+extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
+{
+	return p->Schedproc::do_noquantum(m_ptr);
+}
+
+// extern "C" int call_Schedproc_accept_message(Schedproc* p, message *m_ptr)
+// {
+// 	return p->Schedproc::accept_message(m_ptr);	
+// }
+
+extern "C" int call_Schedproc_no_sys(Schedproc* p, int who_e, int call_nr)
+{
+	return p->Schedproc::no_sys(who_e, call_nr);	
+}
+
+
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
 // {

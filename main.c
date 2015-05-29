@@ -20,6 +20,8 @@ int call_Schedproc_do_start_scheduling(struct M*, message *m_ptr);
 int call_Schedproc_do_stop_scheduling(struct M*, message *m_ptr);
 int call_Schedproc_do_nice(struct M*, message *m_ptr);
 int call_Schedproc_do_noquantum(struct M*, message *m_ptr);
+//int call_Schedproc_accept_message(struct M*, message *m_ptr);
+int call_Schedproc_no_sys(struct M*, int who_e, int call_nr);	
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -94,7 +96,7 @@ int main(void)
 			}
 			break;
 		default:
-			result = no_sys(who_e, call_nr);
+			result = call_Schedproc_no_sys(p, who_e, call_nr);
 		}
 
 sendreply:
