@@ -73,7 +73,7 @@ int main(void)
 			result = call_Schedproc_do_stop_scheduling(p, &m_in);
 			break;
 		case SCHEDULING_SET_NICE:
-			result = call_Schedproc_do_nice(&m_in);
+			result = call_Schedproc_do_nice(p, &m_in);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
