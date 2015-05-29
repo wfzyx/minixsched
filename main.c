@@ -14,7 +14,8 @@ static void reply(endpoint_t whom, message *m_ptr);
 static void sef_local_startup(void);
 
 struct machine machine;		/* machine info */
-
+struct M;
+int call_Schedproc_do_start_scheduling(struct M*, message *m_ptr);
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -27,6 +28,7 @@ int main(void)
 	int result;	/* result to system call */
 	int rv;
 	int s;
+	struct M* p;
 
 	/* SEF local startup. */
 	sef_local_startup();
@@ -62,7 +64,7 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = do_start_scheduling(&m_in);
+			result = call_Schedproc_do_start_scheduling(p, &m_in);
 			break;
 		case SCHEDULING_STOP:
 			result = do_stop_scheduling(&m_in);

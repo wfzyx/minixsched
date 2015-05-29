@@ -42,7 +42,10 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 #define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
 extern "C" int sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
-
+extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
+{
+	return p->Schedproc::do_start_scheduling(m_ptr);
+}
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
 // {
