@@ -140,3 +140,8 @@ int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int c
 {
 	return sys_schedule(proc_ep,priority,quantum,cpu);
 }
+
+int call_minix_sys_schedctl(int a, endpoint_t b, int c, int d, int e)
+{
+	return sys_schedctl(a,b,c,d,e);
+}

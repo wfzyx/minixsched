@@ -38,6 +38,7 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 #define is_system_proc(p)	((p)->parent == RS_PROC_NR)
 
 extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
+extern "C" int call_minix_sys_schedctl(int a, endpoint_t b, int c, int d, int e);
 extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
 {
 	return p->Schedproc::do_start_scheduling(m_ptr);
@@ -417,11 +418,11 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
 	//TODO CHECK EXTERN C
-	/*if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+	if ((rv = sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
 			this->endpoint, rv);
 		return rv;
-	}*/
+	}
 	this->flags = IN_USE;
 
 	/* Schedule the process, giving it some quantum */
