@@ -41,6 +41,8 @@ extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int qua
 extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int priority, int quantum, int cpu);
 extern "C" int accept_message(message *m_ptr);
 extern "C" int no_sys(int who_e, int call_nr);
+int sched_isokendpt(int endpoint, int *proc);
+int sched_isemptyendpt(int endpoint, int *proc)
 
 //Schedproc schedproc[NR_PROCS];
 
@@ -396,7 +398,7 @@ extern "C" int do_start_scheduling(message *m_ptr)
 
 	/* Schedule the process, giving it some quantum */
 	rmp->pick_cpu();
-	while ((rv = schedule_process(rmp, SCHEDULE_CHANGE_ALL)) == EBADCPU) {
+	while ((rv = rmp->schedule_process(SCHEDULE_CHANGE_ALL)) == EBADCPU) {
 		/* don't try this CPU ever again */
 		cpu_proc[rmp->cpu] = CPU_DEAD;
 		rmp->pick_cpu();
