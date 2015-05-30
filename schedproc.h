@@ -90,7 +90,7 @@ class Schedproc
 	    int no_sys(int who_e, int call_nr);
 	    int accept_message(message *m_ptr);
 };
-
+Schedproc schedproc[NR_PROCS];
 #else
 typedef struct schedproc{} sched;
 extern struct schedproc schedproc[NR_PROCS];
