@@ -42,7 +42,7 @@ extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int p
 extern "C" int accept_message(message *m_ptr);
 extern "C" int no_sys(int who_e, int call_nr);
 int sched_isokendpt(int endpoint, int *proc);
-int sched_isemptyendpt(int endpoint, int *proc)
+int sched_isemptyendpt(int endpoint, int *proc);
 
 //Schedproc schedproc[NR_PROCS];
 
