@@ -239,7 +239,7 @@ int sched_isemtyendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-int do_nice(message *m_ptr)
+extern "C" int do_nice(message *m_ptr)
 {
 	Schedproc *rmp;
 	int rv;
@@ -389,7 +389,7 @@ extern "C" int do_start_scheduling(message *m_ptr)
 
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
-	if ((rv = sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
+	if ((rv = call_minix_sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
 			rmp->endpoint, rv);
 		return rv;
