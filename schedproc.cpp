@@ -203,7 +203,7 @@ extern "C" int do_nice(message *m_ptr)
 	/* Update the proc entry and reschedule the process */
 	rmp->max_priority = rmp->priority = new_q;
 
-	if ((rv = schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) 
+	if ((rv = rmp->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) 
 	{
 		rmp->priority     = old_q;
 		rmp->max_priority = old_max_q;
