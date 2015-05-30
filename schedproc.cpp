@@ -39,6 +39,8 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 
 extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int priority, int quantum, int cpu);
+extern "C" int accept_message(message *m_ptr);
+extern "C" int no_sys(int who_e, int call_nr);
 
 //Schedproc schedproc[NR_PROCS];
 
@@ -209,7 +211,7 @@ extern "C" int do_stop_scheduling(message *m_ptr)
 	return OK;
 }
 
-int Schedproc::sched_isokendpt(int endpoint, int *proc)
+int sched_isokendpt(int endpoint, int *proc)
 {
 	*proc = _ENDPOINT_P(endpoint);
 	if (*proc < 0)
@@ -223,7 +225,7 @@ int Schedproc::sched_isokendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
+int sched_isemtyendpt(int endpoint, int *proc)
 {
 	*proc = _ENDPOINT_P(endpoint);
 	if (*proc < 0)
