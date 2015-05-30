@@ -127,41 +127,41 @@ void Schedproc::pick_cpu()
 #endif
 }
 
-int Schedproc::do_noquantum(message *m_ptr) {
+extern "C" int do_noquantum(message *m_ptr) 
+{
+	Schedproc *rmp;
 	int rv, proc_nr_n;
 	unsigned ipc, burst, queue_bump;
 	short load;
 
-	if (this->sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
+	if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
 		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg %u.\n",m_ptr->m_source);
 		return EBADEPT;
 	}
 
-	// TODO : ROTINA DE COPIA
-	//rmp = &schedproc[proc_nr_n];
+	rmp = &schedproc[proc_nr_n];
 
 	ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
 
 	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 	
-	burst = (this->time_slice * 1000 / ipc) / 100;
-	
-	burst = this->burst_smooth(burst);
+	burst = (rmp->time_slice * 1000 / ipc) / 100;
+ 
+	burst = rmp->burst_smooth(burst);
 
 	queue_bump = burst/INC_PER_QUEUE;
 
-	if (this->max_priority + queue_bump > MIN_USER_Q) {
-		queue_bump = MIN_USER_Q - this->max_priority;
+	if (rmp->max_priority + queue_bump > MIN_USER_Q) {
+		queue_bump = MIN_USER_Q - rmp->max_priority;
 	}
 
-	this->priority = this->max_priority + queue_bump;
-	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
+	rmp->priority = rmp->max_priority + queue_bump;
+	rmp->time_slice = rmp->base_time_slice + 2 * queue_bump * (rmp->base_time_slice/10);
 
-	// TODO CHECK WHERE IN HELL THE FLAG SHOULD COME FROM
-        unsigned placeholder = 0;
-	if ((rv = this->schedule_process(placeholder)) != OK) {
+	// Beletti: 29/05/2015 - ficou estranho... corrigir depois!
+	/*if ((rv = rmp->schedule_process(rmp)) != OK) {
 		return rv;
-	}
+	}*/
 	return OK;
 }
 
@@ -235,45 +235,41 @@ int Schedproc::sched_isemtyendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-
-int Schedproc::do_nice(message *m_ptr)
+int do_nice(message *m_ptr)
 {
+	Schedproc *rmp;
 	int rv;
 	int proc_nr_n;
 	unsigned new_q, old_q, old_max_q;
 
 	/* check who can send you requests */
-	if (!this->accept_message(m_ptr))
+	if (accept_message(m_ptr))
 		return EPERM;
 
-	if (this->sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
 		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->SCHEDULING_ENDPOINT);
 		return EBADEPT;
 	}
 
-	// TODO : ROTINA DE COPIA
-	//rmp = &schedproc[proc_nr_n];
+	rmp = &schedproc[proc_nr_n];
 	new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
 	if (new_q >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
 
 	/* Store old values, in case we need to roll back the changes */
-	old_q     = this->priority;
-	old_max_q = this->max_priority;
+	old_q     = rmp->priority;
+	old_max_q = rmp->max_priority;
 
 	/* Update the proc entry and reschedule the process */
-	this->max_priority = this->priority = new_q;
+	rmp->max_priority = rmp->priority = new_q;
 
-	// TODO: Check from where flags should come
-        unsigned flags_placeholder = 0;
-	if ((rv = this->schedule_process(flags_placeholder)) != OK) 
+	// Beletti: 29/05/2015 - mesma coisa, corrigir...
+	/*if ((rv = schedule_process(rmp)) != OK) 
 	{
-		/* Something went wrong when rescheduling the process, roll
-		 * back the changes to proc struct */
-		this->priority     = old_q;
-		this->max_priority = old_max_q;
-	}
+		rmp->priority     = old_q;
+		rmp->max_priority = old_max_q;
+	}*/
 
 	return rv;
 }
