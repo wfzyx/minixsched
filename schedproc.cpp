@@ -70,7 +70,7 @@ extern "C" int call_Schedproc_no_sys(Schedproc* p, int who_e, int call_nr)
 }
 
 
-Schedproc schedproc[NR_PROCS];
+//Schedproc schedproc[NR_PROCS];
 
 // TODO: Check struct call to C typedef
 // struct schedproc Schedproc::toStruct()
