@@ -39,36 +39,6 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 
 extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int priority, int quantum, int cpu);
-extern "C" int call_Schedproc_do_start_scheduling(Schedproc* p, message *m_ptr)
-{
-	return p->Schedproc::do_start_scheduling(m_ptr);
-}
-
-extern "C" int call_Schedproc_do_stop_scheduling(Schedproc* p, message *m_ptr)
-{
-	return p->Schedproc::do_stop_scheduling(m_ptr);
-}
-
-extern "C" int call_Schedproc_do_nice(Schedproc* p, message *m_ptr)
-{
-	return p->Schedproc::do_nice(m_ptr);
-}
-
-extern "C" int call_Schedproc_do_noquantum(Schedproc* p, message *m_ptr)
-{
-	return p->Schedproc::do_noquantum(m_ptr);
-}
-
-// extern "C" int call_Schedproc_accept_message(Schedproc* p, message *m_ptr)
-// {
-// 	return p->Schedproc::accept_message(m_ptr);	
-// }
-
-extern "C" int call_Schedproc_no_sys(Schedproc* p, int who_e, int call_nr)
-{
-	return p->Schedproc::no_sys(who_e, call_nr);	
-}
-
 
 //Schedproc schedproc[NR_PROCS];
 
@@ -215,26 +185,27 @@ BURST_HISTORY_LENGTH] = burst;
 	return avg_burst;
 }
 
-int Schedproc::do_stop_scheduling(message *m_ptr)
+extern "C" int do_stop_scheduling(message *m_ptr)
 {
+	Schedproc *rmp;
 	int proc_nr_n;
 
 	/* check who can send you requests */
-	if (!this->accept_message(m_ptr))
+	if (!accept_message(m_ptr))
 		return EPERM;
 
-	if (this->sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
 		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg "
 		"%ld\n", m_ptr->SCHEDULING_ENDPOINT);
 		return EBADEPT;
 	}
 
-    // TODO : COPY ROUTINE
-	//this = schedproc[proc_nr_n];
+	rmp = &schedproc[proc_nr_n];
 #ifdef CONFIG_SMP
-	cpu_proc[this->cpu]--;
+	cpu_proc[rmp->cpu]--;
 #endif
-	this->flags = 0; /*&= ~IN_USE;*/
+	rmp->flags = 0; /*&= ~IN_USE;*/
+
 	return OK;
 }
 
@@ -337,8 +308,9 @@ int Schedproc::schedule_process(unsigned flags)
 	return err;
 }
 
-int Schedproc::do_start_scheduling(message *m_ptr)
+extern "C" int do_start_scheduling(message *m_ptr)
 {
+	Schedproc *rmp;
 	int rv, proc_nr_n, parent_nr_n;
 	
 	/* we can handle two kinds of messages here */
@@ -346,35 +318,33 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 		m_ptr->m_type == SCHEDULING_INHERIT);
 
 	/* check who can send you requests */
-	if (!this->accept_message(m_ptr))
+	if (!accept_message(m_ptr))
 		return EPERM;
 
 	/* Resolve endpoint to proc slot. */
-	if ((rv = this->sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
+	if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
 			!= OK) {
 		return rv;
 	}
-
-// TODO IMPLEMENT COPY()
-//	this = &schedproc[proc_nr_n];
+	rmp = &schedproc[proc_nr_n];
 
 	/* Populate process slot */
-	this->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
-	this->parent       = m_ptr->SCHEDULING_PARENT;
-	this->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
-	this->burst_hist_cnt = 0;
-	if (this->max_priority >= NR_SCHED_QUEUES) {
+	rmp->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
+	rmp->parent       = m_ptr->SCHEDULING_PARENT;
+	rmp->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	rmp->burst_hist_cnt = 0;
+	if (rmp->max_priority >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
 
 	/* Inherit current priority and time slice from parent. Since there
 	 * is currently only one scheduler scheduling the whole system, this
 	 * value is local and we assert that the parent endpoint is valid */
-	if (this->endpoint == this->parent) {
+	if (rmp->endpoint == rmp->parent) {
 		/* We have a special case here for init, which is the first
 		   process scheduled, and the parent of itself. */
-		this->priority   = USER_Q;
-		this->time_slice = DEFAULT_USER_TIME_SLICE;
+		rmp->priority   = USER_Q;
+		rmp->time_slice = DEFAULT_USER_TIME_SLICE;
 
 		/*
 		 * Since kernel never changes the cpu of a process, all are
@@ -383,7 +353,7 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 		 * processor where the processes run now.
 		 */
 #ifdef CONFIG_SMP
-		this->cpu = machine.bsp_id;
+		rmp->cpu = machine.bsp_id;
 		/* FIXME set the cpu mask */
 #endif
 	}
@@ -394,22 +364,22 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 		/* We have a special case here for system processes, for which
 		 * quanum and priority are set explicitly rather than inherited 
 		 * from the parent */
-		this->priority   = this->max_priority;
-		this->time_slice = (unsigned) m_ptr->SCHEDULING_QUANTUM;
-		this->base_time_slice = this->time_slice;
+		rmp->priority   = rmp->max_priority;
+		rmp->time_slice = (unsigned) m_ptr->SCHEDULING_QUANTUM;
+		rmp->base_time_slice = rmp->time_slice;
 		break;
 		
 	case SCHEDULING_INHERIT:
 		/* Inherit current priority and time slice from parent. Since there
 		 * is currently only one scheduler scheduling the whole system, this
 		 * value is local and we assert that the parent endpoint is valid */
-		if ((rv = this->sched_isokendpt(m_ptr->SCHEDULING_PARENT,
+		if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,
 				&parent_nr_n)) != OK)
 			return rv;
 
-		this->priority = schedproc[parent_nr_n].priority;
-		this->time_slice = schedproc[parent_nr_n].time_slice;
-		this->base_time_slice = this->time_slice;
+		rmp->priority = schedproc[parent_nr_n].priority;
+		rmp->time_slice = schedproc[parent_nr_n].time_slice;
+		rmp->base_time_slice = rmp->time_slice;
 		break;
 		
 	default: 
@@ -419,20 +389,19 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
-	//TODO CHECK EXTERN C
-	if ((rv = call_minix_sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+	if ((rv = sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
-			this->endpoint, rv);
+			rmp->endpoint, rv);
 		return rv;
 	}
-	this->flags = IN_USE;
+	rmp->flags = IN_USE;
 
 	/* Schedule the process, giving it some quantum */
-	this->pick_cpu();
-	while ((rv = this->schedule_process(SCHEDULE_CHANGE_ALL)) == EBADCPU) {
+	rmp->pick_cpu();
+	while ((rv = schedule_process(rmp, SCHEDULE_CHANGE_ALL)) == EBADCPU) {
 		/* don't try this CPU ever again */
-		cpu_proc[this->cpu] = CPU_DEAD;
-		this->pick_cpu();
+		cpu_proc[rmp->cpu] = CPU_DEAD;
+		rmp->pick_cpu();
 	}
 
 	if (rv != OK) {
@@ -453,7 +422,7 @@ int Schedproc::do_start_scheduling(message *m_ptr)
 	return OK;
 }
 
-int Schedproc::no_sys(int who_e, int call_nr)
+extern "C" int no_sys(int who_e, int call_nr)
 {
 /* A system call number not implemented by PM has been requested. */
   printf("SCHED: in no_sys, call nr %d from %d\n", call_nr, who_e);
@@ -461,7 +430,7 @@ int Schedproc::no_sys(int who_e, int call_nr)
 }
 
 
-int Schedproc::accept_message(message *m_ptr)
+extern "C" int accept_message(message *m_ptr)
 {
 	/* accept all messages from PM and RS */
 	switch (m_ptr->m_source) {

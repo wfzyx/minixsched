@@ -15,12 +15,11 @@ static void sef_local_startup(void);
 static void init_scheduling(void);
 struct machine machine;		/* machine info */
 struct M;
-int call_Schedproc_do_start_scheduling(struct M*, message *m_ptr);
-int call_Schedproc_do_stop_scheduling(struct M*, message *m_ptr);
-int call_Schedproc_do_nice(struct M*, message *m_ptr);
-int call_Schedproc_do_noquantum(struct M*, message *m_ptr);
-//int call_Schedproc_accept_message(struct M*, message *m_ptr);
-int call_Schedproc_no_sys(struct M*, int who_e, int call_nr);	
+int do_start_scheduling(message *m_ptr);
+int do_stop_scheduling(message *m_ptr);
+int do_nice(message *m_ptr);
+int do_noquantum(message *m_ptr);
+int no_sys(int who_e, int call_nr);	
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -69,19 +68,19 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = call_Schedproc_do_start_scheduling(p, &m_in);
+			result = do_start_scheduling(&m_in);
 			break;
 		case SCHEDULING_STOP:
-			result = call_Schedproc_do_stop_scheduling(p, &m_in);
+			result = do_stop_scheduling(&m_in);
 			break;
 		case SCHEDULING_SET_NICE:
-			result = call_Schedproc_do_nice(p, &m_in);
+			result = do_nice(&m_in);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
 			if (IPC_STATUS_FLAGS_TEST(ipc_status,
 				IPC_FLG_MSG_FROM_KERNEL)) {
-				if ((rv = call_Schedproc_do_noquantum(p, &m_in)) != (OK)) {
+				if ((rv = do_noquantum(&m_in)) != (OK)) {
 					printf("SCHED: Warning, do_noquantum "
 						"failed with %d\n", rv);
 				}
@@ -95,7 +94,7 @@ int main(void)
 			}
 			break;
 		default:
-			result = call_Schedproc_no_sys(p, who_e, call_nr);
+			result = no_sys(who_e, call_nr);
 		}
 
 sendreply:

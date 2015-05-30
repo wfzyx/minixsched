@@ -75,20 +75,14 @@ class Schedproc
 		bitchunk_t cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
 		unsigned burst_history[BURST_HISTORY_LENGTH];
 		unsigned burst_hist_cnt;
-	    void setValues(Schedproc const &src);
+	    //void setValues(Schedproc const &src);
 	    // struct schedproc toStruct ();
 	    // Schedproc(Schedproc &cSrc);
 	    void pick_cpu();
-	    int do_noquantum(message *m_ptr);
 	    int burst_smooth(unsigned burst);
-	    int do_stop_scheduling(message *m_ptr);
-	    int sched_isokendpt(int endpoint, int *proc);
-	    int sched_isemtyendpt(int endpoint, int *proc);
+	    //int sched_isokendpt(int endpoint, int *proc);
+	    //int sched_isemtyendpt(int endpoint, int *proc);
 	    int schedule_process(unsigned flags);
-	    int do_nice(message *m_ptr);
-	    int do_start_scheduling(message *m_ptr);
-	    int no_sys(int who_e, int call_nr);
-	    int accept_message(message *m_ptr);
 };
 Schedproc schedproc[NR_PROCS];
 #else
