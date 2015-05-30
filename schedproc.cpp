@@ -8,8 +8,6 @@
 #include <sys/resource.h> /* for PRIO_MAX & PRIO_MIN */
 #include "kernel/proc.h" /* for queue constants */
 
-
-
 #define SCHEDULE_CHANGE_PRIO	0x1
 #define SCHEDULE_CHANGE_QUANTUM	0x2
 #define SCHEDULE_CHANGE_CPU	0x4
@@ -19,13 +17,6 @@
 		SCHEDULE_CHANGE_QUANTUM	|	\
 		SCHEDULE_CHANGE_CPU		\
 		)
-
-
-// FAZER OVERLOADS
-#define schedule_process_local(p)	\
-	schedule_process(p, SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)
-#define schedule_process_migrate(p)	\
-	schedule_process(p, SCHEDULE_CHANGE_CPU)
 
 #define CPU_DEAD	-1
 
@@ -43,61 +34,6 @@ extern "C" int accept_message(message *m_ptr);
 extern "C" int no_sys(int who_e, int call_nr);
 int sched_isokendpt(int endpoint, int *proc);
 int sched_isemptyendpt(int endpoint, int *proc);
-
-//Schedproc schedproc[NR_PROCS];
-
-// TODO: Check struct call to C typedef
-// struct schedproc Schedproc::toStruct()
-// {
-// 	struct schedproc retStruct;
-// 	retStruct.endpoint = endpoint;
-// 	retStruct.parent = parent;
-// 	retStruct.flags = flags;
-// 	retStruct.max_priority = max_priority;
-// 	retStruct.priority = priority;
-// 	retStruct.base_time_slice = base_time_slice;
-// 	retStruct.time_slice = time_slice;
-// 	retStruct.cpu = cpu;
-// 	retStruct.cpu_mask[BITMAP_CHUNKS] = cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-// 	retStruct.burst_history[BURST_HISTORY_LENGTH] = burst_history[BURST_HISTORY_LENGTH];
-// 	retStruct.burst_hist_cnt = burst_hist_cnt;
-// 	return retStruct;
-// }
-
-
-//void Schedproc::setValues (Schedroc const &src)
-//{
-//	endpoint = src.endpoint;
-//	parent = src.parent;
-//	flags = src.flags;
-//	max_priority = src.max_priority;
-//	priority = src.priority;
-//	base_time_slice = src.base_time_slice;
-//	time_slice = src.time_slice;
-//	cpu = src.cpu;
-//	cpu_mask[BITMAP_CHUNKS = 
-//src.cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-//	burst_history[BURST_HISTORY_LENGTH] = 
-//src.burst_history[BURST_HISTORY_LENGTH];
-//	burst_hist_cnt = src.burst_hist_cnt;
-//}
-
-//Schedproc::Schedproc(Schedproc src)
-//{
-	//this->endpoint = src->endpoint;	/* process endpoint id */
-	//this->parent = src->parent;		/* parent endpoint id */
-	//this->flags = src->flags;			/* flag bits */
-//
-	///* User space scheduling */
-//	this->max_priority = src->max_priority;		/* this process' highest allowed priority */
-	//this->priority = src->priority;			/* the process' current priority */
-	//this->base_time_slice = src->base_time_slice;
-	//this->time_slice = src->time_slice;		/* this process's time slice */
-	//this->cpu = src->cpu;
-	//this->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)] = src->cpu_mask[BITMAP_CHUNKS(CONFIG_MAX_CPUS)];
-	//this->burst_history[BURST_HISTORY_LENGTH] = src->burst_history[BURST_HISTORY_LENGTH];
-	//this->burst_hist_cnt = src->burst_hist_cnt;
-//}
 
 void Schedproc::pick_cpu()
 {
@@ -162,10 +98,9 @@ extern "C" int do_noquantum(message *m_ptr)
 	rmp->priority = rmp->max_priority + queue_bump;
 	rmp->time_slice = rmp->base_time_slice + 2 * queue_bump * (rmp->base_time_slice/10);
 
-	// Beletti: 29/05/2015 - ficou estranho... corrigir depois!
-	/*if ((rv = rmp->schedule_process(rmp)) != OK) {
+	if ((rv = rmp->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) {
 		return rv;
-	}*/
+	}
 	return OK;
 }
 
@@ -268,12 +203,11 @@ extern "C" int do_nice(message *m_ptr)
 	/* Update the proc entry and reschedule the process */
 	rmp->max_priority = rmp->priority = new_q;
 
-	// Beletti: 29/05/2015 - mesma coisa, corrigir...
-	/*if ((rv = schedule_process(rmp)) != OK) 
+	if ((rv = schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) 
 	{
 		rmp->priority     = old_q;
 		rmp->max_priority = old_max_q;
-	}*/
+	}
 
 	return rv;
 }
