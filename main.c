@@ -32,7 +32,6 @@ int main(void)
 	int result;	/* result to system call */
 	int rv;
 	int s;
-	struct M* p = NULL;
 
 	/* SEF local startup. */
 	sef_local_startup();
