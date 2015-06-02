@@ -39,7 +39,7 @@ int sched_isemptyendpt(int endpoint, int *proc);
 
 int Schedproc::sys_schedule(int new_prio, int new_quantum, int new_cpu)
 {
-	return call_minix_sys_schedule(this-endpoint, new_prio, new_quantum, new_cpu);
+	return call_minix_sys_schedule(this->endpoint, new_prio, new_quantum, new_cpu);
 }
 int Schedproc::sys_schedctl()
 {
