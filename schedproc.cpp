@@ -234,8 +234,7 @@ int Schedproc::schedule_process(unsigned flags)
 	else
 		new_cpu = -1;
 
-	if ((err = call_minix_sys_schedule(this->endpoint, new_prio,
-		new_quantum, new_cpu)) != OK) {
+	if ((err = this->sys_schedule(new_prio,	new_quantum, new_cpu)) != OK) {
 		printf("PM: An error occurred when trying to schedule %d: %d\n",this->endpoint, err);
 	}
 
@@ -323,7 +322,7 @@ extern "C" int do_start_scheduling(message *m_ptr)
 
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
-	if ((rv = call_minix_sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
+	if ((rv = rmp->sys_schedctl()) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
 			rmp->endpoint, rv);
 		return rv;
@@ -377,3 +376,13 @@ extern "C" int accept_message(message *m_ptr)
 	/* no other messages are allowable */
 	return 0;
 }
+
+int Schedproc::sys_schedule(new_prio, new_quantum, new_cpu)
+{
+	return call_minix_sys_schedule(this-endpoint, new_prio, new_quantum, new_cpu);
+}
+int Schedproc::sys_schedctl()
+{
+	return call_minix_sys_schedctl(0, this->endpoint, 0, 0, 0);	
+}
+
