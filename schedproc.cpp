@@ -35,6 +35,17 @@ extern "C" int no_sys(int who_e, int call_nr);
 int sched_isokendpt(int endpoint, int *proc);
 int sched_isemptyendpt(int endpoint, int *proc);
 
+
+
+int Schedproc::sys_schedule(int new_prio, int new_quantum, int new_cpu)
+{
+	return call_minix_sys_schedule(this-endpoint, new_prio, new_quantum, new_cpu);
+}
+int Schedproc::sys_schedctl()
+{
+	return call_minix_sys_schedctl(0, this->endpoint, 0, 0, 0);	
+}
+
 void Schedproc::pick_cpu()
 {
 #ifdef CONFIG_SMP
@@ -376,13 +387,3 @@ extern "C" int accept_message(message *m_ptr)
 	/* no other messages are allowable */
 	return 0;
 }
-
-int Schedproc::sys_schedule(new_prio, new_quantum, new_cpu)
-{
-	return call_minix_sys_schedule(this-endpoint, new_prio, new_quantum, new_cpu);
-}
-int Schedproc::sys_schedctl()
-{
-	return call_minix_sys_schedctl(0, this->endpoint, 0, 0, 0);	
-}
-
