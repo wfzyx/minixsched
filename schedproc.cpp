@@ -72,9 +72,9 @@ extern "C" int Schedproc::do_noquantum(int proc_nr_n)
 
 	rmp = &schedproc[proc_nr_n];
 
-	// CORRIGIR - 11/06/15 (m_ptr)
-	//ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
-	//load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
+	ipc = (unsigned)decparam->acnt_ipc_async + (unsigned)decparam->acnt_ipc_async + 1;
+
+	load = decparam->acnt_cpu_load;
 	
 	burst = (rmp->time_slice * 1000 / ipc) / 100;
  
@@ -135,8 +135,8 @@ extern "C" int Schedproc::do_nice(int proc_nr_n)
 	unsigned new_q, old_q, old_max_q;
 
 	rmp = &schedproc[proc_nr_n];
-	// CORRIGIR - 11/06/15 (m_ptr)
-	//new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+
+	new_q = (unsigned) decparam->maxprio;
 	if (new_q >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
@@ -339,10 +339,9 @@ extern "C" int decoder(int req, message *m_ptr)
 		}
 	}
 
-	// futura estrutura temporaria do decoder
-	// dec.maxprio = m_ptr->SCHEDULING_MAXPRIO;			// ?
-	// dec.acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;	// unsigned
-	// dec.acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;		// ?
+	decparam->maxprio = m_ptr->SCHEDULING_MAXPRIO;
+	decparam->acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;
+	decparam->acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 
 	return proc_nr_n;
 }
@@ -360,6 +359,8 @@ extern "C" int invoke_sched_method(int index, int function)
 	rmp = &schedproc[index];
 	
 	switch(function){
+		case SCHEDULING_START:
+			//return rmp->do_start_scheduling(index);
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling(index);
 		case SCHEDULING_SET_NICE:
