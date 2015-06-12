@@ -353,3 +353,13 @@ extern "C" int no_sys(int who_e, int call_nr)
   printf("SCHED: in no_sys, call nr %d from %d\n", call_nr, who_e);
   return(ENOSYS);
 }
+
+extern "C" int invoke_sched_method(int index, int function)
+{
+	switch(function){
+		case 0:
+			return schedproc[index]->do_start_scheduling(); // need to fix the args
+			break;
+	}
+	
+}

@@ -20,6 +20,7 @@ static void init_scheduling(void);
 struct machine machine;		/* machine info */
 struct M;
 int no_sys(int who_e, int call_nr);	
+int invoke_sched_method(int index, int function)
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -71,7 +72,9 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
+			//do_start is 0 for now
 			//result = Schedproc::do_start_scheduling(proc_num);
+			result = invoke_sched_method(proc_num, 0);
 			break;
 		case SCHEDULING_STOP:
 			//result = Schedproc::do_stop_scheduling(proc_num);
