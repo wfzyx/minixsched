@@ -66,6 +66,7 @@ void Schedproc::pick_cpu()
 extern "C" int Schedproc::do_noquantum(int proc_nr_n)
 {
 	Schedproc *rmp;
+	int rv;
 	unsigned ipc, burst, queue_bump;
 	short load;
 
@@ -130,6 +131,7 @@ extern "C" int Schedproc::do_stop_scheduling(int proc_nr_n)
 extern "C" int Schedproc::do_nice(int proc_nr_n)
 {
 	Schedproc *rmp;
+	int rv;
 	unsigned new_q, old_q, old_max_q;
 
 	rmp = &schedproc[proc_nr_n];
