@@ -19,10 +19,6 @@ int accept_message(message *m_ptr);
 static void init_scheduling(void);
 struct machine machine;		/* machine info */
 struct M;
-int do_start_scheduling(message *m_ptr);
-int do_stop_scheduling(message *m_ptr);
-int do_nice(message *m_ptr);
-int do_noquantum(message *m_ptr);
 int no_sys(int who_e, int call_nr);	
 /*===========================================================================*
  *				main					     *
@@ -131,90 +127,6 @@ static void sef_local_startup(void)
 
 	/* Let SEF perform startup. */
 	sef_startup();
-}
-
-/*===========================================================================*
- *			       decoder					     *
- *===========================================================================*/
-int decoder(int req, message *m_ptr) 
-{
-	int rv, proc_nr_n;
-
-	if (req != SCHEDULING_NO_QUANTUM) {
-		if (!accept_message(m_ptr))
-			return EPERM;
-	}
-
-	if ( (req == SCHEDULING_INHERIT) || (req == SCHEDULING_START) ) {
-		if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n)) != OK) {
-			return rv;
-		}
-	}
-	else {
-		if (req != SCHEDULING_NO_QUANTUM) {
-			if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
-				printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->SCHEDULING_ENDPOINT);
-				return EBADEPT;
-			}
-		}
-	}
-
-	// futura estrutura temporaria do decoder
-	// dec.maxprio = m_ptr->SCHEDULING_MAXPRIO;			// ?
-	// dec.acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;	// unsigned
-	// dec.acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;		// ?
-
-	return proc_nr_n;
-}
-
-/*===========================================================================*
- *				sched_isokendpt			 	     *
- *===========================================================================*/
-int sched_isokendpt(int endpoint, int *proc)
-{
-	*proc = _ENDPOINT_P(endpoint);
-	if (*proc < 0)
-		return (EBADEPT); /* Don't schedule tasks */
-	if(*proc >= NR_PROCS)
-		return (EINVAL);
-	//if(endpoint != schedproc[*proc].endpoint)
-	//	return (EDEADEPT);
-	//if(!(schedproc[*proc].flags & IN_USE))
-	//	return (EDEADEPT);
-	return (OK);
-}
-
-/*===========================================================================*
- *				sched_isemtyendpt		 	     *
- *===========================================================================*/
-int sched_isemtyendpt(int endpoint, int *proc)
-{
-	*proc = _ENDPOINT_P(endpoint);
-	if (*proc < 0)
-		return (EBADEPT); /* Don't schedule tasks */
-	if(*proc >= NR_PROCS)
-		return (EINVAL);
-	//if(schedproc[*proc].flags & IN_USE)
-	//	return (EDEADEPT);
-	return (OK);
-}
-
-/*===========================================================================*
- *				accept_message				     *
- *===========================================================================*/
-int accept_message(message *m_ptr)
-{
-	/* accept all messages from PM and RS */
-	switch (m_ptr->m_source) {
-
-		case PM_PROC_NR:
-		case RS_PROC_NR:
-			return 1;
-			
-	}
-	
-	/* no other messages are allowable */
-	return 0;
 }
 
 void init_scheduling(void)
