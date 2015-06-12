@@ -361,8 +361,11 @@ extern "C" int invoke_sched_method(int index, int function)
 	
 	switch(function){
 		case SCHEDULING_STOP:
-			return rmp->do_start_scheduling(index);
-			break;
+			return rmp->do_stop_scheduling(index);
+		case SCHEDULING_SET_NICE:
+			return rmp->do_nice(index);
+		case SCHEDULING_NO_QUANTUM:
+			return rmp->do_noquantum(index);
 	}
 	
 }
