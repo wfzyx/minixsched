@@ -326,8 +326,6 @@ int accept_message(message *m_ptr)
 extern "C" int decoder(int req, message *m_ptr) 
 {
 	int rv, proc_nr_n;
-	Decparam *dec;
-	dec = &decparam;
 
 	if (req != SCHEDULING_NO_QUANTUM) {
 		if (!accept_message(m_ptr))
@@ -348,9 +346,9 @@ extern "C" int decoder(int req, message *m_ptr)
 		}
 	}
 
-	dec->maxprio = m_ptr->SCHEDULING_MAXPRIO;
-	dec->acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;
-	dec->acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
+	dec.maxprio = m_ptr->SCHEDULING_MAXPRIO;
+	dec.acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;
+	dec.acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 
 	return proc_nr_n;
 }
