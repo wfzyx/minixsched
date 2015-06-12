@@ -37,6 +37,16 @@ class Schedproc
 		int do_nice(int proc_nr_n);
 };
 Schedproc schedproc[NR_PROCS];
+
+class DecParam
+{
+	public:
+		unsigned maxprio;
+		unsigned acnt_ipc_async;
+		unsigned acnt_cpu_load;
+};
+DecParam decparam;
+
 #else
 typedef struct schedproc{} sched;
 extern struct schedproc schedproc[NR_PROCS];
