@@ -72,22 +72,20 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			//do_start is 0 for now
-			//result = Schedproc::do_start_scheduling(proc_num);
+			//result = invoke_sched_method(proc_num, SCHEDULING_START);
 			break;
 		case SCHEDULING_STOP:
 			result = invoke_sched_method(proc_num, SCHEDULING_STOP);
-			//result = Schedproc::do_stop_scheduling(proc_num);
 			break;
 		case SCHEDULING_SET_NICE:
-			//result = Schedproc::do_nice(proc_num);
+			result = invoke_sched_method(proc_num, SCHEDULING_SET_NICE);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
 			if (IPC_STATUS_FLAGS_TEST(ipc_status,IPC_FLG_MSG_FROM_KERNEL)) {
-				//if ( (rv = Schedproc::do_noquantum(proc_num)) != (OK)) {
-				//	printf("SCHED: Warning, do_noquantum failed with %d\n", rv);
-				//}
+				if ( (rv = invoke_sched_method(proc_num, SCHEDULING_NO_QUANTUM) ) != (OK)) {
+					printf("SCHED: Warning, do_noquantum failed with %d\n", rv);
+				}
 				continue; /* Don't reply */
 			}
 			else {
