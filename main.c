@@ -36,6 +36,7 @@ int main(void)
 	int result;	/* result to system call */
 	int rv;
 	int s;
+	int proc_num;
 
 	/* SEF local startup. */
 	sef_local_startup();
