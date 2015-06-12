@@ -85,9 +85,9 @@ int main(void)
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
 			if (IPC_STATUS_FLAGS_TEST(ipc_status,IPC_FLG_MSG_FROM_KERNEL)) {
-				if ((rv = Schedproc::do_noquantum(proc_num)) != (OK)) {
-					printf("SCHED: Warning, do_noquantum failed with %d\n", rv);
-				}
+				//if ( (rv = Schedproc::do_noquantum(proc_num)) != (OK)) {
+				//	printf("SCHED: Warning, do_noquantum failed with %d\n", rv);
+				//}
 				continue; /* Don't reply */
 			}
 			else {
@@ -144,7 +144,7 @@ int decoder(int req, message *m_ptr)
 			return EPERM;
 	}
 
-	if (req == SCHEDULING_INHERIT) || (req == SCHEDULING_START) {
+	if ( (req == SCHEDULING_INHERIT) || (req == SCHEDULING_START) ) {
 		if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n)) != OK) {
 			return rv;
 		}
@@ -176,10 +176,10 @@ int sched_isokendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(endpoint != schedproc[*proc].endpoint)
-		return (EDEADEPT);
-	if(!(schedproc[*proc].flags & IN_USE))
-		return (EDEADEPT);
+	//if(endpoint != schedproc[*proc].endpoint)
+	//	return (EDEADEPT);
+	//if(!(schedproc[*proc].flags & IN_USE))
+	//	return (EDEADEPT);
 	return (OK);
 }
 
@@ -193,8 +193,8 @@ int sched_isemtyendpt(int endpoint, int *proc)
 		return (EBADEPT); /* Don't schedule tasks */
 	if(*proc >= NR_PROCS)
 		return (EINVAL);
-	if(schedproc[*proc].flags & IN_USE)
-		return (EDEADEPT);
+	//if(schedproc[*proc].flags & IN_USE)
+	//	return (EDEADEPT);
 	return (OK);
 }
 
