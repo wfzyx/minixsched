@@ -356,9 +356,12 @@ extern "C" int no_sys(int who_e, int call_nr)
 
 extern "C" int invoke_sched_method(int index, int function)
 {
+	Schedproc *rmp;
+	rmp = &schedproc[index];
+	
 	switch(function){
-		case 0:
-			return schedproc[index]->do_start_scheduling(); // need to fix the args
+		case SCHEDULING_STOP:
+			return rmp->do_start_scheduling(index);
 			break;
 	}
 	
