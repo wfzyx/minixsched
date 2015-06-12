@@ -77,10 +77,10 @@ int main(void)
 			//result = Schedproc::do_start_scheduling(proc_num);
 			break;
 		case SCHEDULING_STOP:
-			result = Schedproc::do_stop_scheduling(proc_num);
+			//result = Schedproc::do_stop_scheduling(proc_num);
 			break;
 		case SCHEDULING_SET_NICE:
-			result = Schedproc::do_nice(proc_num);
+			//result = Schedproc::do_nice(proc_num);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
