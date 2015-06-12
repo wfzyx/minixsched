@@ -31,6 +31,13 @@ unsigned cpu_proc[CONFIG_MAX_CPUS];
 extern "C" int call_minix_sys_schedule(endpoint_t proc_ep, int priority, int quantum, int cpu);
 extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int priority, int quantum, int cpu);
 
+struct decp
+{
+	unsigned maxprio;
+	unsigned acnt_ipc_async;
+	unsigned acnt_cpu_load;
+} dec;
+
 void Schedproc::pick_cpu()
 {
 #ifdef CONFIG_SMP
@@ -72,9 +79,9 @@ extern "C" int Schedproc::do_noquantum(int proc_nr_n)
 
 	rmp = &schedproc[proc_nr_n];
 
-	ipc = (unsigned)decparam->acnt_ipc_async + (unsigned)decparam->acnt_ipc_async + 1;
+	ipc = (unsigned)dec.acnt_ipc_async + (unsigned)dec.acnt_ipc_async + 1;
 
-	load = decparam->acnt_cpu_load;
+	load = dec.acnt_cpu_load;
 	
 	burst = (rmp->time_slice * 1000 / ipc) / 100;
  
@@ -136,7 +143,7 @@ extern "C" int Schedproc::do_nice(int proc_nr_n)
 
 	rmp = &schedproc[proc_nr_n];
 
-	new_q = (unsigned) decparam->maxprio;
+	new_q = (unsigned) dec.maxprio;
 	if (new_q >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
