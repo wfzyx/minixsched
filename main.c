@@ -19,7 +19,9 @@ int do_start_scheduling(message *m_ptr);
 int do_stop_scheduling(message *m_ptr);
 int do_nice(message *m_ptr);
 int do_noquantum(message *m_ptr);
-int no_sys(int who_e, int call_nr);	
+int no_sys(int who_e, int call_nr);
+int decoder(int req, message *m_ptr);
+int invoke_sched_method(int index, int function);
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
@@ -32,7 +34,7 @@ int main(void)
 	int result;	/* result to system call */
 	int rv;
 	int s;
-	int procnum;
+	int proc_num;
 
 	/* SEF local startup. */
 	sef_local_startup();
