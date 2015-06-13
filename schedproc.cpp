@@ -377,3 +377,57 @@ extern "C" int accept_message(message *m_ptr)
 	/* no other messages are allowable */
 	return 0;
 }
+
+/*===========================================================================*
+ *			       decoder					     *
+ *===========================================================================*/
+extern "C" int decoder(int req, message *m_ptr) 
+{
+	int rv, proc_nr_n,parent_nr_n;
+
+	if (req != SCHEDULING_NO_QUANTUM) {
+		if (!accept_message(m_ptr))
+			return EPERM;
+	}
+
+	if ( (req == SCHEDULING_INHERIT) || (req == SCHEDULING_START) ) {
+		if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n)) != OK) {
+			return rv;
+		}
+		if (req == SCHEDULING_INHERIT) {
+			if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,&parent_nr_n)) != OK)
+				return rv;
+			dec.parent_priority   = schedproc[parent_nr_n].priority;
+			dec.parent_time_slice = schedproc[parent_nr_n].time_slice;
+		}
+		m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
+	}
+	else {
+		if (req != SCHEDULING_NO_QUANTUM) {
+			if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
+				printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->SCHEDULING_ENDPOINT);
+				return EBADEPT;
+			}
+		}
+	}
+
+	return proc_nr_n;
+}
+
+extern "C" int invoke_sched_method(int index, int function)
+{
+	Schedproc *rmp;
+	rmp = &schedproc[index];
+	
+	switch(function){
+		//case SCHEDULING_START:
+		//	return rmp->do_start_scheduling(index);
+		case SCHEDULING_STOP:
+			return rmp->do_stop_scheduling();
+		//case SCHEDULING_SET_NICE:
+		//	return rmp->do_nice(index);
+		//case SCHEDULING_NO_QUANTUM:
+		//	return rmp->do_noquantum(index);
+	}
+	return 0;	
+}
