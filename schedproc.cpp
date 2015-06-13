@@ -160,39 +160,28 @@ int sched_isemtyendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-extern "C" int do_nice(message *m_ptr)
+extern "C" int Schedproc::do_nice(message *m_ptr)
 {
-	Schedproc *rmp;
 	int rv;
 	int proc_nr_n;
-	unsigned new_q, old_q, old_max_q;
+	unsigned new_q=0, old_q, old_max_q;
 
-	/* check who can send you requests */
-	if (accept_message(m_ptr))
-		return EPERM;
-
-	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
-		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->SCHEDULING_ENDPOINT);
-		return EBADEPT;
-	}
-
-	rmp = &schedproc[proc_nr_n];
-	new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	//new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
 	if (new_q >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
 
 	/* Store old values, in case we need to roll back the changes */
-	old_q     = rmp->priority;
-	old_max_q = rmp->max_priority;
+	old_q     = this->priority;
+	old_max_q = this->max_priority;
 
 	/* Update the proc entry and reschedule the process */
-	rmp->max_priority = rmp->priority = new_q;
+	this->max_priority = this->priority = new_q;
 
-	if ((rv = rmp->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) 
+	if ((rv = this->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) 
 	{
-		rmp->priority     = old_q;
-		rmp->max_priority = old_max_q;
+		this->priority     = old_q;
+		this->max_priority = old_max_q;
 	}
 
 	return rv;
