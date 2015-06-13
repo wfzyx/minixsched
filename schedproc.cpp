@@ -383,8 +383,6 @@ extern "C" int decoder(int req, message *m_ptr)
 		if (req == SCHEDULING_INHERIT) {
 			if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,&parent_nr_n)) != OK)
 				return rv;
-			dec.parent_priority   = schedproc[parent_nr_n].priority;
-			dec.parent_time_slice = schedproc[parent_nr_n].time_slice;
 		}
 		m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	}
