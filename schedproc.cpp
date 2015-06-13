@@ -33,6 +33,9 @@ extern "C" int call_minix_sys_schedctl(unsigned flags, endpoint_t proc_ep, int p
 
 struct decp
 {
+	endpoint_t endpoint;
+	endpoint_t parent;
+	unsigned quantum;
 	unsigned maxprio;
 	unsigned acnt_ipc_async;
 	unsigned acnt_cpu_load;
@@ -194,31 +197,21 @@ int Schedproc::schedule_process(unsigned flags)
 	return err;
 }
 
-/*
-extern "C" int do_start_scheduling(message *m_ptr)
+// corrigir 12/06/15
+extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 {
 	Schedproc *rmp;
-	int rv, proc_nr_n, parent_nr_n;
+	int rv, parent_nr_n;
 	
-	assert(m_ptr->m_type == SCHEDULING_START || m_ptr->m_type == SCHEDULING_INHERIT);
-
-	if (!accept_message(m_ptr))
-		return EPERM;
-
-	if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n))
-			!= OK) {
-		return rv;
-	}
+	//assert(m_ptr->m_type == SCHEDULING_START || m_ptr->m_type == SCHEDULING_INHERIT);
 	rmp = &schedproc[proc_nr_n];
-
-	rmp->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
-	rmp->parent       = m_ptr->SCHEDULING_PARENT;
-	rmp->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	rmp->endpoint     = dec.endpoint;
+	rmp->parent       = dec.parent;
+	rmp->max_priority = (unsigned) dec.maxprio;
 	rmp->burst_hist_cnt = 0;
 	if (rmp->max_priority >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
-
 	if (rmp->endpoint == rmp->parent) {
 		rmp->priority   = USER_Q;
 		rmp->time_slice = DEFAULT_USER_TIME_SLICE;
@@ -226,16 +219,14 @@ extern "C" int do_start_scheduling(message *m_ptr)
 		rmp->cpu = machine.bsp_id;
 #endif
 	}
-	
 	switch (m_ptr->m_type) {
-
 	case SCHEDULING_START:
 		rmp->priority   = rmp->max_priority;
-		rmp->time_slice = (unsigned) m_ptr->SCHEDULING_QUANTUM;
+		rmp->time_slice = (unsigned) dec.quantum;
 		rmp->base_time_slice = rmp->time_slice;
 		break;		
 	case SCHEDULING_INHERIT:
-		if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,
+		if ((rv = sched_isokendpt(dec.parent,
 				&parent_nr_n)) != OK)
 			return rv;
 		rmp->priority = schedproc[parent_nr_n].priority;
@@ -245,30 +236,25 @@ extern "C" int do_start_scheduling(message *m_ptr)
 	default: 
 		assert(0);
 	}
-
 	if ((rv = call_minix_sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
 		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
 			rmp->endpoint, rv);
 		return rv;
 	}
 	rmp->flags = IN_USE;
-
 	rmp->pick_cpu();
 	while ((rv = rmp->schedule_process(SCHEDULE_CHANGE_ALL)) == EBADCPU) {
 		cpu_proc[rmp->cpu] = CPU_DEAD;
 		rmp->pick_cpu();
 	}
-
 	if (rv != OK) {
 		printf("Sched: Error while scheduling process, kernel replied %d\n",rv);
 		return rv;
 	}
-
-	m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
-
+	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	return OK;
 }
-*/
+
 
 /*===========================================================================*
  *				sched_isokendpt			 	     *
