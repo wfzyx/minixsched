@@ -360,7 +360,7 @@ extern "C" int invoke_sched_method(int index, int function)
 	
 	switch(function){
 		case SCHEDULING_START:
-			//return rmp->do_start_scheduling(index);
+			return rmp->do_start_scheduling(index);
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling(index);
 		case SCHEDULING_SET_NICE:
