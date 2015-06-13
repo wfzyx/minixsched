@@ -40,6 +40,8 @@ struct decp
 	unsigned acnt_ipc_async;
 	unsigned acnt_cpu_load;
 	int mtype;
+	unsigned parent_priority;
+	unsigned parent_time_slice;
 } dec;
 
 void Schedproc::pick_cpu()
@@ -226,10 +228,8 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		rmp->base_time_slice = rmp->time_slice;
 		break;		
 	case SCHEDULING_INHERIT:
-		//if ((rv = sched_isokendpt(dec.parent,&parent_nr_n)) != OK)
-		//	return rv;
-		rmp->priority = schedproc[parent_nr_n].priority;
-		rmp->time_slice = schedproc[parent_nr_n].time_slice;
+		rmp->priority = dec.parent_priority;
+		rmp->time_slice = dec.parent_time_slice;
 		rmp->base_time_slice = rmp->time_slice;
 		break;		
 	default: 
@@ -308,7 +308,7 @@ int accept_message(message *m_ptr)
  *===========================================================================*/
 extern "C" int decoder(int req, message *m_ptr) 
 {
-	int rv, proc_nr_n;
+	int rv, proc_nr_n,parent_nr_n;
 
 	if (req != SCHEDULING_NO_QUANTUM) {
 		if (!accept_message(m_ptr))
@@ -318,6 +318,12 @@ extern "C" int decoder(int req, message *m_ptr)
 	if ( (req == SCHEDULING_INHERIT) || (req == SCHEDULING_START) ) {
 		if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n)) != OK) {
 			return rv;
+		}
+		if (req == SCHEDULING_INHERIT) {
+			if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,&parent_nr_n)) != OK)
+				return rv;
+			dec.parent_priority   = schedproc[parent_nr_n].priority;
+			dec.parent_time_slice = schedproc[parent_nr_n].time_slice;
 		}
 	}
 	else {
