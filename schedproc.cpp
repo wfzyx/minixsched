@@ -163,7 +163,6 @@ int sched_isemtyendpt(int endpoint, int *proc)
 extern "C" int Schedproc::do_nice()
 {
 	int rv;
-	int proc_nr_n;
 	unsigned new_q=0, old_q, old_max_q;
 
 	//new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
