@@ -251,7 +251,6 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		return rv;
 	}
 	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
-	dec.p->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	return OK;
 }
 
@@ -327,6 +326,7 @@ extern "C" int decoder(int req, message *m_ptr)
 			dec.parent_priority   = schedproc[parent_nr_n].priority;
 			dec.parent_time_slice = schedproc[parent_nr_n].time_slice;
 		}
+		m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	}
 	else {
 		if (req != SCHEDULING_NO_QUANTUM) {
