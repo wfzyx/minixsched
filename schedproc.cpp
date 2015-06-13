@@ -39,6 +39,7 @@ struct decp
 	unsigned maxprio;
 	unsigned acnt_ipc_async;
 	unsigned acnt_cpu_load;
+	int mtype;
 } dec;
 
 void Schedproc::pick_cpu()
@@ -219,7 +220,7 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		rmp->cpu = machine.bsp_id;
 #endif
 	}
-	switch (m_ptr->m_type) {
+	switch (dec.m_type) {
 	case SCHEDULING_START:
 		rmp->priority   = rmp->max_priority;
 		rmp->time_slice = (unsigned) dec.quantum;
@@ -332,9 +333,13 @@ extern "C" int decoder(int req, message *m_ptr)
 		}
 	}
 
+	dec.endpoint = m_ptr->SCHEDULING_ENDPOINT;
+	dec.parent = m_ptr->SCHEDULING_PARENT;
+	dec.quantum = m_ptr->SCHEDULING_QUANTUM;
 	dec.maxprio = m_ptr->SCHEDULING_MAXPRIO;
 	dec.acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;
 	dec.acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
+	dec.mtype = m_ptr->m_type;
 
 	return proc_nr_n;
 }
@@ -361,5 +366,5 @@ extern "C" int invoke_sched_method(int index, int function)
 		case SCHEDULING_NO_QUANTUM:
 			return rmp->do_noquantum(index);
 	}
-	
+	return 0;	
 }
