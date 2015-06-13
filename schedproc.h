@@ -33,6 +33,9 @@ class Schedproc
 	    	int burst_smooth(unsigned burst);
 	    	int schedule_process(unsigned flags);
 	    	int do_stop_scheduling();
+	    	int do_nice();
+	    	//int do_noquantum();
+	    	//int do_start_scheduling();
 };
 Schedproc schedproc[NR_PROCS];
 #else
