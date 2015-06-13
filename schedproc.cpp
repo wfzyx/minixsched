@@ -203,7 +203,7 @@ int Schedproc::schedule_process(unsigned flags)
 extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 {
 	Schedproc *rmp;
-	int rv, parent_nr_n;
+	int rv;
 	
 	assert(dec.mtype == SCHEDULING_START || dec.mtype == SCHEDULING_INHERIT);
 	rmp = &schedproc[proc_nr_n];
