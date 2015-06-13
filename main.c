@@ -73,12 +73,12 @@ int main(void)
 			result = do_start_scheduling(&m_in);
 			break;
 		case SCHEDULING_STOP:
-			//result = do_stop_scheduling(&m_in);
 			proc_num = decoder(call_nr, &m_in);
 			result = invoke_sched_method(proc_num, SCHEDULING_STOP);
 			break;
 		case SCHEDULING_SET_NICE:
-			result = do_nice(&m_in);
+			proc_num = decoder(call_nr, &m_in);
+			result = invoke_sched_method(proc_num, SCHEDULING_SET_NICE);
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
