@@ -42,6 +42,7 @@ struct decp
 	int mtype;
 	unsigned parent_priority;
 	unsigned parent_time_slice;
+	message **p; // ponteiro para ponteiro, depois vai resolver "TUDO"
 } dec;
 
 void Schedproc::pick_cpu()
@@ -342,6 +343,7 @@ extern "C" int decoder(int req, message *m_ptr)
 	dec.acnt_ipc_async = m_ptr->SCHEDULING_ACNT_IPC_ASYNC;
 	dec.acnt_cpu_load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
 	dec.mtype = m_ptr->m_type;
+	dec.p = &m_ptr;	// salvo o endereco da msg, depois isso aqui resolver "TUDO"
 
 	return proc_nr_n;
 }
