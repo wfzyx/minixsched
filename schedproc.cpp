@@ -124,26 +124,12 @@ BURST_HISTORY_LENGTH] = burst;
 	return avg_burst;
 }
 
-extern "C" int do_stop_scheduling(message *m_ptr)
+extern "C" int Schedproc::do_stop_scheduling()
 {
-	Schedproc *rmp;
-	int proc_nr_n;
-
-	/* check who can send you requests */
-	if (!accept_message(m_ptr))
-		return EPERM;
-
-	if (sched_isokendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n) != OK) {
-		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg "
-		"%ld\n", m_ptr->SCHEDULING_ENDPOINT);
-		return EBADEPT;
-	}
-
-	rmp = &schedproc[proc_nr_n];
 #ifdef CONFIG_SMP
-	cpu_proc[rmp->cpu]--;
+	cpu_proc[this->cpu]--;
 #endif
-	rmp->flags = 0; /*&= ~IN_USE;*/
+	this->flags = 0; /*&= ~IN_USE;*/
 
 	return OK;
 }
