@@ -35,6 +35,7 @@ class Schedproc
  		int do_noquantum(int proc_nr_n);
 		int do_stop_scheduling(int proc_nr_n);
 		int do_nice(int proc_nr_n);
+		int do_start_scheduling(int proc_nr_n);
 };
 Schedproc schedproc[NR_PROCS];
 #else
