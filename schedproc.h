@@ -32,6 +32,7 @@ class Schedproc
 	    	void pick_cpu();
 	    	int burst_smooth(unsigned burst);
 	    	int schedule_process(unsigned flags);
+	    	int do_stop_scheduling();
 };
 Schedproc schedproc[NR_PROCS];
 #else
