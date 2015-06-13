@@ -72,7 +72,7 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			//result = invoke_sched_method(proc_num, SCHEDULING_START);
+			result = invoke_sched_method(proc_num, SCHEDULING_START);
 			break;
 		case SCHEDULING_STOP:
 			result = invoke_sched_method(proc_num, SCHEDULING_STOP);
