@@ -160,7 +160,7 @@ int sched_isemtyendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-extern "C" int Schedproc::do_nice(message *m_ptr)
+extern "C" int Schedproc::do_nice()
 {
 	int rv;
 	int proc_nr_n;
