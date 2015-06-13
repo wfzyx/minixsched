@@ -251,6 +251,7 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		return rv;
 	}
 	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
+	dec.p->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	return OK;
 }
 
