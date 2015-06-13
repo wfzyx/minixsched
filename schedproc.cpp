@@ -198,13 +198,12 @@ int Schedproc::schedule_process(unsigned flags)
 	return err;
 }
 
-// corrigir 12/06/15
 extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 {
 	Schedproc *rmp;
 	int rv, parent_nr_n;
 	
-	//assert(m_ptr->m_type == SCHEDULING_START || m_ptr->m_type == SCHEDULING_INHERIT);
+	assert(dec.mtype == SCHEDULING_START || dec.mtype == SCHEDULING_INHERIT);
 	rmp = &schedproc[proc_nr_n];
 	rmp->endpoint     = dec.endpoint;
 	rmp->parent       = dec.parent;
@@ -220,16 +219,15 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		rmp->cpu = machine.bsp_id;
 #endif
 	}
-	switch (dec.m_type) {
+	switch (dec.mtype) {
 	case SCHEDULING_START:
 		rmp->priority   = rmp->max_priority;
 		rmp->time_slice = (unsigned) dec.quantum;
 		rmp->base_time_slice = rmp->time_slice;
 		break;		
 	case SCHEDULING_INHERIT:
-		if ((rv = sched_isokendpt(dec.parent,
-				&parent_nr_n)) != OK)
-			return rv;
+		//if ((rv = sched_isokendpt(dec.parent,&parent_nr_n)) != OK)
+		//	return rv;
 		rmp->priority = schedproc[parent_nr_n].priority;
 		rmp->time_slice = schedproc[parent_nr_n].time_slice;
 		rmp->base_time_slice = rmp->time_slice;
@@ -238,8 +236,7 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 		assert(0);
 	}
 	if ((rv = call_minix_sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
-		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",
-			rmp->endpoint, rv);
+		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",rmp->endpoint, rv);
 		return rv;
 	}
 	rmp->flags = IN_USE;
@@ -255,7 +252,6 @@ extern "C" int Schedproc::do_start_scheduling(int proc_nr_n)
 	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 	return OK;
 }
-
 
 /*===========================================================================*
  *				sched_isokendpt			 	     *
