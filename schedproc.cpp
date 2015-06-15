@@ -239,7 +239,7 @@ extern "C" int Schedproc::do_start_scheduling(int m_type, endpoint_t endp, endpo
 #endif
 	}
 	
-	switch (m_ptr->m_type) {
+	switch (m_type) {
 
 	case SCHEDULING_START:
 		/* We have a special case here for system processes, for which
