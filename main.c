@@ -21,7 +21,7 @@ int do_nice(message *m_ptr);
 int do_noquantum(message *m_ptr);
 int no_sys(int who_e, int call_nr);
 int decoder(int req, message *m_ptr);
-int invoke_sched_method(int index, int function);
+int invoke_sched_method(int index, int function, message *m_ptr);
 /*===========================================================================*
  *				main					     *
  *===========================================================================*/
