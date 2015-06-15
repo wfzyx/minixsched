@@ -204,7 +204,7 @@ int Schedproc::schedule_process(unsigned flags)
 
 extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
 {
-	int rv, proc_nr_n, parent_nr_n;
+	int rv, parent_nr_n;
 	
 	/* we can handle two kinds of messages here */
 	assert(m_ptr->m_type == SCHEDULING_START || m_ptr->m_type == SCHEDULING_INHERIT);
@@ -269,8 +269,8 @@ extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
 
 	/* Take over scheduling the process. The kernel reply message populates
 	 * the processes current priority and its time slice */
-	if ((rv = call_minix_sys_schedctl(0, rmp->endpoint, 0, 0, 0)) != OK) {
-		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",rmp->endpoint, rv);
+	if ((rv = call_minix_sys_schedctl(0, this->endpoint, 0, 0, 0)) != OK) {
+		printf("Sched: Error taking over scheduling for %d, kernel said %d\n",this->endpoint, rv);
 		return rv;
 	}
 	this->flags = IN_USE;
@@ -368,10 +368,12 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 {
 	Schedproc *rmp;
 	rmp = &schedproc[index];
+	message **m_ptr2;
+	m_ptr2 = &m_ptr;
 	
 	switch(function){
 		case SCHEDULING_START:
-			return rmp->do_start_scheduling(&m_ptr);
+			return rmp->do_start_scheduling(m_ptr2);
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
