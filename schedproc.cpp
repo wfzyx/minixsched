@@ -370,7 +370,7 @@ extern "C" int decoder(int req, message *m_ptr)
 		else 
 			// SCHEDULING_NO_QUANTUM
 			if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
-				printf("SCHED: WARNING: got an invalid endpoint in OOQ msg ""%ld\n", m_ptr->source);
+				printf("SCHED: WARNING: got an invalid endpoint in OOQ msg %u.\n",m_ptr->m_source);
 				return EBADEPT;
 			}
 		}
