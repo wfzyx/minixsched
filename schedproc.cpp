@@ -67,38 +67,25 @@ void Schedproc::pick_cpu()
 #endif
 }
 
-extern "C" int do_noquantum(message *m_ptr) 
+extern "C" int do_noquantum(unsigned ipc) 
 {
-	Schedproc *rmp;
 	int rv, proc_nr_n;
-	unsigned ipc, burst, queue_bump;
-	short load;
+	unsigned burst, queue_bump;
 
-	if (sched_isokendpt(m_ptr->m_source, &proc_nr_n) != OK) {
-		printf("SCHED: WARNING: got an invalid endpoint in OOQ msg %u.\n",m_ptr->m_source);
-		return EBADEPT;
-	}
-
-	rmp = &schedproc[proc_nr_n];
-
-	ipc = (unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1;
-
-	load = m_ptr->SCHEDULING_ACNT_CPU_LOAD;
-	
 	burst = (rmp->time_slice * 1000 / ipc) / 100;
  
-	burst = rmp->burst_smooth(burst);
+	burst = this->burst_smooth(burst);
 
 	queue_bump = burst/INC_PER_QUEUE;
 
-	if (rmp->max_priority + queue_bump > MIN_USER_Q) {
-		queue_bump = MIN_USER_Q - rmp->max_priority;
+	if (this->max_priority + queue_bump > MIN_USER_Q) {
+		queue_bump = MIN_USER_Q - this->max_priority;
 	}
 
-	rmp->priority = rmp->max_priority + queue_bump;
-	rmp->time_slice = rmp->base_time_slice + 2 * queue_bump * (rmp->base_time_slice/10);
+	this->priority = this->max_priority + queue_bump;
+	this->time_slice = this->base_time_slice + 2 * queue_bump * (this->base_time_slice/10);
 
-	if ((rv = rmp->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) {
+	if ((rv = this->schedule_process(SCHEDULE_CHANGE_PRIO | SCHEDULE_CHANGE_QUANTUM)) != OK) {
 		return rv;
 	}
 	return OK;
@@ -397,8 +384,8 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
 			return rmp->do_nice((unsigned) m_ptr->SCHEDULING_MAXPRIO);
-		//case SCHEDULING_NO_QUANTUM:
-		//	return rmp->do_noquantum(index);
+		case SCHEDULING_NO_QUANTUM:
+			return rmp->do_noquantum((unsigned)m_ptr->SCHEDULING_ACNT_IPC_ASYNC + (unsigned)m_ptr->SCHEDULING_ACNT_IPC_SYNC + 1);
 	}
 	return 0;	
 }
