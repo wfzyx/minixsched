@@ -160,12 +160,11 @@ int sched_isemtyendpt(int endpoint, int *proc)
 	return (OK);
 }
 
-extern "C" int Schedproc::do_nice()
+extern "C" int Schedproc::do_nice(unsigned new_q)
 {
 	int rv;
-	unsigned new_q=0, old_q, old_max_q;
+	unsigned old_q, old_max_q;
 
-	//new_q = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
 	if (new_q >= NR_SCHED_QUEUES) {
 		return EINVAL;
 	}
@@ -386,7 +385,7 @@ extern "C" int decoder(int req, message *m_ptr)
 	return proc_nr_n;
 }
 
-extern "C" int invoke_sched_method(int index, int function)
+extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 {
 	Schedproc *rmp;
 	rmp = &schedproc[index];
@@ -397,7 +396,7 @@ extern "C" int invoke_sched_method(int index, int function)
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
-			return rmp->do_nice();
+			return rmp->do_nice((unsigned) m_ptr->SCHEDULING_MAXPRIO);
 		//case SCHEDULING_NO_QUANTUM:
 		//	return rmp->do_noquantum(index);
 	}
