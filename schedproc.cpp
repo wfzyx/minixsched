@@ -67,7 +67,7 @@ void Schedproc::pick_cpu()
 #endif
 }
 
-extern "C" int do_noquantum(unsigned ipc) 
+extern "C" int Schedproc::do_noquantum(unsigned ipc) 
 {
 	int rv, proc_nr_n;
 	unsigned burst, queue_bump;
