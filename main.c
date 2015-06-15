@@ -82,18 +82,16 @@ int main(void)
 			break;
 		case SCHEDULING_NO_QUANTUM:
 			/* This message was sent from the kernel, don't reply */
-			if (IPC_STATUS_FLAGS_TEST(ipc_status,
-				IPC_FLG_MSG_FROM_KERNEL)) {
-				if ((rv = do_noquantum(&m_in)) != (OK)) {
-					printf("SCHED: Warning, do_noquantum "
-						"failed with %d\n", rv);
+			if (IPC_STATUS_FLAGS_TEST(ipc_status,IPC_FLG_MSG_FROM_KERNEL)) {
+				//if ((rv = do_noquantum(&m_in)) != (OK)) {
+				proc_num = decoder(call_nr, &m_in);
+				if ((rv = invoke_sched_method(proc_num, SCHEDULING_NO_QUANTUM, &m_in)) != (OK)) {
+					printf("SCHED: Warning, do_noquantum failed with %d\n", rv);
 				}
 				continue; /* Don't reply */
 			}
 			else {
-				printf("SCHED: process %d faked "
-					"SCHEDULING_NO_QUANTUM message!\n",
-						who_e);
+				printf("SCHED: process %d faked SCHEDULING_NO_QUANTUM message!\n",who_e);
 				result = EPERM;
 			}
 			break;
