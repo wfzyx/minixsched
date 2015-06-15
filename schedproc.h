@@ -35,7 +35,7 @@ class Schedproc
 	    	int do_stop_scheduling();
 	    	int do_nice(unsigned new_q);
 	    	int do_noquantum(unsigned ipc);
-	    	//int do_start_scheduling();
+	    	int do_start_scheduling(message *m_ptr);
 };
 Schedproc schedproc[NR_PROCS];
 #else
