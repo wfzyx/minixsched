@@ -202,17 +202,17 @@ int Schedproc::schedule_process(unsigned flags)
 	return err;
 }
 
-extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
+extern "C" int Schedproc::do_start_scheduling(int m_type, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum)
 {
 	int rv, parent_nr_n;
 	
 	/* we can handle two kinds of messages here */
-	assert(m_ptr->m_type == SCHEDULING_START || m_ptr->m_type == SCHEDULING_INHERIT);
+	assert(m_type == SCHEDULING_START || m_type == SCHEDULING_INHERIT);
 
 	/* Populate process slot */
-	this->endpoint     = m_ptr->SCHEDULING_ENDPOINT;
-	this->parent       = m_ptr->SCHEDULING_PARENT;
-	this->max_priority = (unsigned) m_ptr->SCHEDULING_MAXPRIO;
+	this->endpoint     = endp;
+	this->parent       = parent;
+	this->max_priority = maxprio;
 	this->burst_hist_cnt = 0;
 	if (this->max_priority >= NR_SCHED_QUEUES) {
 		return EINVAL;
@@ -246,7 +246,7 @@ extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
 		 * quanum and priority are set explicitly rather than inherited 
 		 * from the parent */
 		this->priority   = this->max_priority;
-		this->time_slice = (unsigned) m_ptr->SCHEDULING_QUANTUM;
+		this->time_slice = quantum;
 		this->base_time_slice = this->time_slice;
 		break;
 		
@@ -254,7 +254,7 @@ extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
 		/* Inherit current priority and time slice from parent. Since there
 		 * is currently only one scheduler scheduling the whole system, this
 		 * value is local and we assert that the parent endpoint is valid */
-		if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,&parent_nr_n)) != OK)
+		if ((rv = sched_isokendpt(parent,&parent_nr_n)) != OK)
 			return rv;
 
 		this->priority = schedproc[parent_nr_n].priority;
@@ -295,7 +295,7 @@ extern "C" int Schedproc::do_start_scheduling(message *m_ptr)
 	 * scheduler into SCHEDULING_SCHEDULER
 	 */
 
-	m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
+	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
 
 	return OK;
 }
@@ -368,12 +368,14 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 {
 	Schedproc *rmp;
 	rmp = &schedproc[index];
-	message **m_ptr2;
-	m_ptr2 = &m_ptr;
-	
+	unsigned maxprio=m_ptr->SCHEDULING_MAXPRIO, quantum=m_ptr->SCHEDULING_QUANTUM;
+	int m_type=m_ptr->m_type;
+	endpoint_t endp=m_ptr->SCHEDULING_ENDPOINT, parent= m_ptr->SCHEDULING_PARENT;
+
 	switch(function){
 		case SCHEDULING_START:
-			return rmp->do_start_scheduling(m_ptr2);
+			//return rmp->do_start_scheduling(m_ptr);
+			return rmp->do_start_scheduling(int m_type, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum);
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
