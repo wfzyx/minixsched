@@ -69,10 +69,10 @@ void Schedproc::pick_cpu()
 
 extern "C" int Schedproc::do_noquantum(unsigned ipc) 
 {
-	int rv, proc_nr_n;
+	int rv;
 	unsigned burst, queue_bump;
 
-	burst = (rmp->time_slice * 1000 / ipc) / 100;
+	burst = (this->time_slice * 1000 / ipc) / 100;
  
 	burst = this->burst_smooth(burst);
 
