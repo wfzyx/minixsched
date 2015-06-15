@@ -70,7 +70,8 @@ int main(void)
 		switch(call_nr) {
 		case SCHEDULING_INHERIT:
 		case SCHEDULING_START:
-			result = do_start_scheduling(&m_in);
+			proc_num = decoder(call_nr, &m_in);
+			result = invoke_sched_method(proc_num, SCHEDULING_START, &m_in);
 			break;
 		case SCHEDULING_STOP:
 			proc_num = decoder(call_nr, &m_in);
