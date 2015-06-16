@@ -35,7 +35,7 @@ class Schedproc
 	    	int do_stop_scheduling();
 	    	int do_nice(unsigned new_q);
 	    	int do_noquantum(unsigned ipc);
-	    	int do_start_scheduling(int m_type, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum);
+	    	int do_start_scheduling(int mtp, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum);
 };
 Schedproc schedproc[NR_PROCS];
 #else
