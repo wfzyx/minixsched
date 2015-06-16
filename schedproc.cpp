@@ -294,9 +294,6 @@ extern "C" int Schedproc::do_start_scheduling(decp *dec)
 	 * scheduler, it could do so and then write the endpoint of that
 	 * scheduler into SCHEDULING_SCHEDULER
 	 */
-
-	//m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
-
 	return OK;
 }
 
@@ -366,6 +363,7 @@ extern "C" int decoder(int req, message *m_ptr)
 
 extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 {
+	int rv;
 	Schedproc *rmp;
 	rmp = &schedproc[index];
 	decp dec;
@@ -378,8 +376,10 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 
 	switch(function){
 		case SCHEDULING_START:
-			//return rmp->do_start_scheduling(m_ptr);
-			return rmp->do_start_scheduling(&dec);
+			rv = rmp->do_start_scheduling(&dec)
+			if (rv == OK)
+				m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;				
+			return rv;
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
