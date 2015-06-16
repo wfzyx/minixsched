@@ -35,15 +35,6 @@ extern "C" int no_sys(int who_e, int call_nr);
 int sched_isokendpt(int endpoint, int *proc);
 int sched_isemptyendpt(int endpoint, int *proc);
 
-struct decp
-{
-	endpoint_t endpoint;
-	endpoint_t parent;
-	unsigned quantum;
-	unsigned maxprio;
-	int mtype;
-};
-
 void Schedproc::pick_cpu()
 {
 #ifdef CONFIG_SMP
