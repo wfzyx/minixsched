@@ -335,11 +335,11 @@ extern "C" int decoder(int req, message *m_ptr)
 		if ((rv = sched_isemtyendpt(m_ptr->SCHEDULING_ENDPOINT, &proc_nr_n)) != OK) {
 			return rv;
 		}
-		if (req == SCHEDULING_INHERIT) {
+		/*if (req == SCHEDULING_INHERIT) {
 			if ((rv = sched_isokendpt(m_ptr->SCHEDULING_PARENT,&parent_nr_n)) != OK)
 				return rv;
 		}
-		m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;
+		m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;*/
 	}
 	else {
 		if (req == SCHEDULING_STOP) {
