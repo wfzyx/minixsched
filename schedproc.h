@@ -11,6 +11,15 @@
 
 #define BURST_HISTORY_LENGTH 10
 
+struct decp
+{
+	endpoint_t endpoint;
+	endpoint_t parent;
+	unsigned quantum;
+	unsigned maxprio;
+	int mtype;
+};
+
 #ifdef __cplusplus
 
 class Schedproc
