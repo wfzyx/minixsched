@@ -202,12 +202,12 @@ int Schedproc::schedule_process(unsigned flags)
 	return err;
 }
 
-extern "C" int Schedproc::do_start_scheduling(int m_type, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum)
+extern "C" int Schedproc::do_start_scheduling(int mtp, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum)
 {
 	int rv, parent_nr_n;
 	
 	/* we can handle two kinds of messages here */
-	assert(m_type == SCHEDULING_START || m_type == SCHEDULING_INHERIT);
+	assert(mtp == SCHEDULING_START || mtp == SCHEDULING_INHERIT);
 
 	/* Populate process slot */
 	this->endpoint     = endp;
@@ -239,7 +239,7 @@ extern "C" int Schedproc::do_start_scheduling(int m_type, endpoint_t endp, endpo
 #endif
 	}
 	
-	switch (m_type) {
+	switch (mtp) {
 
 	case SCHEDULING_START:
 		/* We have a special case here for system processes, for which
@@ -368,14 +368,14 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 {
 	Schedproc *rmp;
 	rmp = &schedproc[index];
-	unsigned maxprio=m_ptr->SCHEDULING_MAXPRIO, quantum=m_ptr->SCHEDULING_QUANTUM;
-	int m_type=m_ptr->m_type;
+	int mtp=m_ptr->m_type;
 	endpoint_t endp=m_ptr->SCHEDULING_ENDPOINT, parent= m_ptr->SCHEDULING_PARENT;
+	unsigned maxprio=m_ptr->SCHEDULING_MAXPRIO, quantum=m_ptr->SCHEDULING_QUANTUM;
 
 	switch(function){
 		case SCHEDULING_START:
 			//return rmp->do_start_scheduling(m_ptr);
-			return rmp->do_start_scheduling(int m_type, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum);
+			return rmp->do_start_scheduling(int mtp, endpoint_t endp, endpoint_t parent, unsigned maxprio, unsigned quantum);
 		case SCHEDULING_STOP:
 			return rmp->do_stop_scheduling();
 		case SCHEDULING_SET_NICE:
