@@ -324,7 +324,7 @@ extern "C" int accept_message(message *m_ptr)
  *===========================================================================*/
 extern "C" int decoder(int req, message *m_ptr) 
 {
-	int rv, proc_nr_n,parent_nr_n;
+	int rv, proc_nr_n;
 
 	if (req != SCHEDULING_NO_QUANTUM) {
 		if (!accept_message(m_ptr))
@@ -376,7 +376,7 @@ extern "C" int invoke_sched_method(int index, int function, message *m_ptr)
 
 	switch(function){
 		case SCHEDULING_START:
-			rv = rmp->do_start_scheduling(&dec)
+			rv = rmp->do_start_scheduling(&dec);
 			if (rv == OK)
 				m_ptr->SCHEDULING_SCHEDULER = SCHED_PROC_NR;				
 			return rv;
