@@ -216,12 +216,12 @@ extern "C" int Schedproc::do_start_scheduling(decp *dec)
 	int rv, parent_nr_n;
 	
 	/* we can handle two kinds of messages here */
-	assert(dec.mtype == SCHEDULING_START || dec.mtype == SCHEDULING_INHERIT);
+	assert(dec->mtype == SCHEDULING_START || dec->mtype == SCHEDULING_INHERIT);
 
 	/* Populate process slot */
-	this->endpoint     = dec.endpoint;
-	this->parent       = dec.parent;
-	this->max_priority = dec.maxprio;
+	this->endpoint     = dec->endpoint;
+	this->parent       = dec->parent;
+	this->max_priority = dec->maxprio;
 	this->burst_hist_cnt = 0;
 	if (this->max_priority >= NR_SCHED_QUEUES) {
 		return EINVAL;
@@ -248,14 +248,14 @@ extern "C" int Schedproc::do_start_scheduling(decp *dec)
 #endif
 	}
 	
-	switch (dec.mtype) {
+	switch (dec->mtype) {
 
 	case SCHEDULING_START:
 		/* We have a special case here for system processes, for which
 		 * quanum and priority are set explicitly rather than inherited 
 		 * from the parent */
 		this->priority   = this->max_priority;
-		this->time_slice = dec.quantum;
+		this->time_slice = dec->quantum;
 		this->base_time_slice = this->time_slice;
 		break;
 		
@@ -263,7 +263,7 @@ extern "C" int Schedproc::do_start_scheduling(decp *dec)
 		/* Inherit current priority and time slice from parent. Since there
 		 * is currently only one scheduler scheduling the whole system, this
 		 * value is local and we assert that the parent endpoint is valid */
-		if ((rv = sched_isokendpt(dec.parent,&parent_nr_n)) != OK)
+		if ((rv = sched_isokendpt(dec->parent,&parent_nr_n)) != OK)
 			return rv;
 
 		this->priority = schedproc[parent_nr_n].priority;
